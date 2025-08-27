@@ -42,13 +42,6 @@
         .styled-table tbody tr { border-bottom: 1px solid var(--border-color); }
         .styled-table tbody tr:nth-of-type(even) { background-color: var(--bg-color); }
         .styled-table .total-row { font-weight: 700; background-color: #e2e6ea; }
-        .gantt-container { width: 100%; height: 100%; padding: 1rem; display: flex; flex-direction: column; justify-content: center; }
-        .gantt-row { display: flex; align-items: center; margin-bottom: 1rem; }
-        .gantt-label { width: 100px; font-weight: 700; font-size: 1em; }
-        .gantt-bar-container { flex-grow: 1; display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; }
-        .gantt-bar { height: 30px; border-radius: 4px; }
-        .nursery { background-color: #fca5a5; } .nft { background-color: #86efac; }
-        .harvest { background-color: var(--accent-color); color: white; display:flex; justify-content:center; align-items:center; font-size:1em; font-weight: bold;}
         @media (max-width: 900px) { #scrolly-container { flex-direction: column; } #scrolly-graphics, #scrolly-text { width: 100%; } figure { position: relative; height: 60vh; } .chart-container { height: calc(100% - 40px); width: calc(100% - 40px); } article { padding: 20px; } .step { margin-bottom: 40px; } }
     </style>
 </head>
@@ -89,12 +82,7 @@
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-        import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
-
-        // --- IMPORTANT: CONFIGURE YOUR REPOSITORY NAME HERE ---
-        const repoName = 'ProjectAmgong'; // <-- Change 'hydroponic-proposal' to YOUR repository name!
-        // --- END CONFIGURATION ---
-
+        
         const config = { capacity: { headsPerMonth: 2550 }, financials: { headsSold: 2295, avgPrice: 6.50, costs: { lightHours: 14, electricityTariff: 0.441, seedsMediaPerHead: 0.25, nutrientsPerHead: 0.20, packagingPerHead: 0.35, laborPerMonth: 1800, otherPerMonth: 75 } } };
         
         document.addEventListener('DOMContentLoaded', function () {
@@ -124,8 +112,7 @@
                     chartHeader.innerHTML = `<h3>Venue Overview: Interactive 3D Model</h3><p>A high-fidelity model from Sweet Home 3D.</p>`;
                     chartBody.innerHTML = '';
                     
-                    const objPath = `${repoName}/FloorPlan_Hydro.obj`;
-                    const mtlPath = `${repoName}/FloorPlan_Hydro.mtl`;
+                    const objFileName = 'FloorPlan_Hydro.obj';
 
                     const scene = new THREE.Scene();
                     scene.background = new THREE.Color(0xf8f9fa);
@@ -143,22 +130,13 @@
                     dirLight.position.set(10, 20, 5);
                     scene.add(dirLight);
                     
-                    new MTLLoader().load(mtlPath, (materials) => {
-                        materials.preload();
-                        new OBJLoader().setMaterials(materials).load(objPath, (object) => {
-                            const box = new THREE.Box3().setFromObject(object);
-                            const center = box.getCenter(new THREE.Vector3());
-                            object.position.sub(center);
-                            scene.add(object);
-                        }, undefined, (e) => { throw new Error(`Could not load OBJ file at '${objPath}'. Check the file name and path in your repository.`); });
-                    }, undefined, (e) => {
-                        console.warn(`Could not load MTL file at '${mtlPath}'. Loading OBJ with basic materials.`);
-                        new OBJLoader().load(objPath, (object) => {
-                            const box = new THREE.Box3().setFromObject(object);
-                            const center = box.getCenter(new THREE.Vector3());
-                            object.position.sub(center);
-                            scene.add(object);
-                        }, undefined, (e) => { throw new Error(`Could not load OBJ file at '${objPath}'. Check the file name and path in your repository.`); });
+                    new OBJLoader().load(objFileName, (object) => {
+                        const box = new THREE.Box3().setFromObject(object);
+                        const center = box.getCenter(new THREE.Vector3());
+                        object.position.sub(center);
+                        scene.add(object);
+                    }, undefined, (error) => {
+                        throw new Error(`Could not load the OBJ file: ${objFileName}. Ensure it's in the same directory and the local/GitHub server is running correctly.`);
                     });
                     
                     function animate() { requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); }
