@@ -42,6 +42,13 @@
         .styled-table tbody tr { border-bottom: 1px solid var(--border-color); }
         .styled-table tbody tr:nth-of-type(even) { background-color: var(--bg-color); }
         .styled-table .total-row { font-weight: 700; background-color: #e2e6ea; }
+        .gantt-container { width: 100%; height: 100%; padding: 1rem; display: flex; flex-direction: column; justify-content: center; }
+        .gantt-row { display: flex; align-items: center; margin-bottom: 1rem; }
+        .gantt-label { width: 100px; font-weight: 700; font-size: 1em; }
+        .gantt-bar-container { flex-grow: 1; display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; }
+        .gantt-bar { height: 30px; border-radius: 4px; }
+        .nursery { background-color: #fca5a5; } .nft { background-color: #86efac; }
+        .harvest { background-color: var(--accent-color); color: white; display:flex; justify-content:center; align-items:center; font-size:1em; font-weight: bold;}
         @media (max-width: 900px) { #scrolly-container { flex-direction: column; } #scrolly-graphics, #scrolly-text { width: 100%; } figure { position: relative; height: 60vh; } .chart-container { height: calc(100% - 40px); width: calc(100% - 40px); } article { padding: 20px; } .step { margin-bottom: 40px; } }
     </style>
 </head>
@@ -83,9 +90,9 @@
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
         
-        const config = { capacity: { headsPerMonth: 2550 }, financials: { headsSold: 2295, avgPrice: 6.50, costs: { lightHours: 14, electricityTariff: 0.441, seedsMediaPerHead: 0.25, nutrientsPerHead: 0.20, packagingPerHead: 0.35, laborPerMonth: 1800, otherPerMonth: 75 } } };
-        
+        // --- ALL SCRIPT LOGIC IS NOW INSIDE DOMCONTENTLOADED ---
         document.addEventListener('DOMContentLoaded', function () {
+            const config = { capacity: { headsPerMonth: 2550 }, financials: { headsSold: 2295, avgPrice: 6.50, costs: { lightHours: 14, electricityTariff: 0.441, seedsMediaPerHead: 0.25, nutrientsPerHead: 0.20, packagingPerHead: 0.35, laborPerMonth: 1800, otherPerMonth: 75 } } };
             const article = document.querySelector("#scrolly-text article");
             const steps = article.querySelectorAll(".step");
             const chartHeader = document.getElementById('chart-header');
@@ -136,7 +143,7 @@
                         object.position.sub(center);
                         scene.add(object);
                     }, undefined, (error) => {
-                        throw new Error(`Could not load the OBJ file: ${objFileName}. Ensure it's in the same directory and the local/GitHub server is running correctly.`);
+                        throw new Error(`Could not load the OBJ file: ${objFileName}. Ensure it's in the same directory and the server is running correctly.`);
                     });
                     
                     function animate() { requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); }
