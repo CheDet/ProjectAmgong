@@ -20,7 +20,7 @@
         #chart-header h3 { margin: 0; font-size: 1.8rem; color: var(--accent-dark); font-weight: 700; }
         #chart-header p { margin: 5px 0 0 0; font-size: 1rem; color: #6c757d; }
         #chart-body { flex-grow: 1; min-height: 0; display: flex; align-items: center; justify-content: center; position: relative; }
-        #chart-body canvas { display: block; } /* For Three.js */
+        #chart-body canvas { display: block; }
         article { padding: 5vh 40px; }
         .step { margin-bottom: 85vh; padding: 25px; background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border-radius: 12px; border: 1px solid var(--border-color); }
         .step:last-child { margin-bottom: 30vh; }
@@ -88,14 +88,14 @@
     <script type="module">
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+        import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 
-        const config = {
-            capacity: { headsPerMonth: 2550 },
-            financials: {
-                headsSold: 2295, avgPrice: 6.50,
-                costs: { lightHours: 14, electricityTariff: 0.441, seedsMediaPerHead: 0.25, nutrientsPerHead: 0.20, packagingPerHead: 0.35, laborPerMonth: 1800, otherPerMonth: 75 }
-            }
-        };
+        // --- IMPORTANT: CONFIGURE YOUR REPOSITORY NAME HERE ---
+        const repoName = 'ProjectAmgong'; // <-- Change 'hydroponic-proposal' to YOUR repository name!
+        // --- END CONFIGURATION ---
+
+        const config = { capacity: { headsPerMonth: 2550 }, financials: { headsSold: 2295, avgPrice: 6.50, costs: { lightHours: 14, electricityTariff: 0.441, seedsMediaPerHead: 0.25, nutrientsPerHead: 0.20, packagingPerHead: 0.35, laborPerMonth: 1800, otherPerMonth: 75 } } };
         
         document.addEventListener('DOMContentLoaded', function () {
             const article = document.querySelector("#scrolly-text article");
@@ -107,13 +107,7 @@
             
             const headsSlider = document.getElementById('heads-slider');
             const headsValueSpan = document.getElementById('heads-value');
-            headsSlider.addEventListener('input', (e) => { 
-                const heads = parseInt(e.target.value);
-                const percentage = ((heads / config.capacity.headsPerMonth) * 100).toFixed(0);
-                headsValueSpan.textContent = `${heads} (${percentage}%)`;
-                config.financials.headsSold = heads;
-                if (currentStep === 7) drawChart(7, false); 
-            });
+            headsSlider.addEventListener('input', (e) => { const heads = parseInt(e.target.value); const percentage = ((heads / config.capacity.headsPerMonth) * 100).toFixed(0); headsValueSpan.textContent = `${heads} (${percentage}%)`; config.financials.headsSold = heads; if (currentStep === 7) drawChart(7, false); });
             document.getElementById('price-slider').addEventListener('input', (e) => { document.getElementById('price-value').textContent = parseFloat(e.target.value).toFixed(2); config.financials.avgPrice = parseFloat(e.target.value); if (currentStep === 7) drawChart(7, false); });
             document.getElementById('energy-slider').addEventListener('input', (e) => { document.getElementById('energy-value').textContent = parseFloat(e.target.value).toFixed(1); config.financials.costs.lightHours = parseFloat(e.target.value); if (currentStep === 7) drawChart(7, false); });
 
@@ -125,67 +119,55 @@
             const animateWaterfall = (chart) => { const t = anime.timeline({ easing: 'easeOutExpo', duration: 600 }); chart.querySelectorAll("rect").forEach((bar, i) => { const h = bar.getAttribute('height'), y = bar.getAttribute('y'), sY = parseFloat(y) + parseFloat(h); t.add({ targets: bar, height: [0, h], y: [sY, y] }, `-=${i > 0 ? 300 : 0}`); }); };
             const animateDonut = (chart) => { chart.querySelectorAll("path").forEach(path => { const l = path.getTotalLength(); anime({ targets: path, strokeDasharray: [l, l], strokeDashoffset: [l, 0], duration: 1000, easing: 'easeOutQuart' }); }); };
             
-            const init3DView = () => {
+            const initSweetHome3DView = () => {
                 try {
-                    chartHeader.innerHTML = `<h3>Venue Overview: 2nd Floor Shophouse</h3><p>An interactive 3D model based on the provided floor plan.</p>`;
+                    chartHeader.innerHTML = `<h3>Venue Overview: Interactive 3D Model</h3><p>A high-fidelity model from Sweet Home 3D.</p>`;
                     chartBody.innerHTML = '';
                     
-                    // --- ADJUSTABLE MEASUREMENTS ---
-                    // These values are based on your floor plan. You can tweak them here.
-                    const dimensions = {
-                        totalLength: 12.02,
-                        backAreaLength: 4.6,
-                        midAreaLength1: 2.22,
-                        midAreaLength2: 2.56,
-                        frontAreaLength: 2.26, // Corrected from image
-                        mainWidth: 3.16 + 3.7, // 6.86m
-                        backWidth: 7.17,
-                        mainVerticalDividerX: 3.16,
-                        wallHeight: 2.68,
-                        wallThickness: 0.15
-                    };
-                    // --- END ADJUSTABLE MEASUREMENTS ---
+                    const objPath = `${repoName}/FloorPlan_Hydro.obj`;
+                    const mtlPath = `${repoName}/FloorPlan_Hydro.mtl`;
 
                     const scene = new THREE.Scene();
                     scene.background = new THREE.Color(0xf8f9fa);
-                    const camera = new THREE.PerspectiveCamera(75, chartBody.clientWidth / chartBody.clientHeight, 0.1, 1000);
+                    const camera = new THREE.PerspectiveCamera(50, chartBody.clientWidth / chartBody.clientHeight, 0.1, 1000);
+                    camera.position.set(10, 10, 15);
                     const renderer = new THREE.WebGLRenderer({ antialias: true });
                     renderer.setSize(chartBody.clientWidth, chartBody.clientHeight);
                     chartBody.appendChild(renderer.domElement);
+                    
                     const controls = new OrbitControls(camera, renderer.domElement);
-                    scene.add(new THREE.AmbientLight(0xffffff, 0.8));
-                    const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+                    controls.enableDamping = true;
+                    
+                    scene.add(new THREE.AmbientLight(0xffffff, 1.5));
+                    const dirLight = new THREE.DirectionalLight(0xffffff, 2.0);
                     dirLight.position.set(10, 20, 5);
                     scene.add(dirLight);
-
-                    const wallMaterial = new THREE.MeshStandardMaterial({ color: 0xe0e0e0 });
-                    const createWall = (w, d, x, z, rotY = 0) => { const wall = new THREE.Mesh(new THREE.BoxGeometry(w, dimensions.wallHeight, d), wallMaterial); wall.position.set(x, dimensions.wallHeight / 2, z); wall.rotation.y = rotY; return wall; };
-                    const floor1 = new THREE.Mesh(new THREE.BoxGeometry(dimensions.backWidth, dimensions.wallThickness, dimensions.backAreaLength), new THREE.MeshStandardMaterial({ color: 0xAC8F78 }));
-                    floor1.position.set(dimensions.backWidth / 2, 0, dimensions.backAreaLength / 2);
-                    const floor2 = new THREE.Mesh(new THREE.BoxGeometry(dimensions.mainWidth, dimensions.wallThickness, dimensions.totalLength - dimensions.backAreaLength), new THREE.MeshStandardMaterial({ color: 0xBDB3A9 }));
-                    floor2.position.set(dimensions.mainWidth / 2, 0, dimensions.backAreaLength + (dimensions.totalLength - dimensions.backAreaLength) / 2);
-                    scene.add(floor1, floor2);
                     
-                    // Outer Walls
-                    scene.add(createWall(dimensions.totalLength, dimensions.wallThickness, 0, dimensions.totalLength/2, Math.PI/2)); // Left wall
-                    scene.add(createWall(dimensions.mainWidth, dimensions.wallThickness, dimensions.mainWidth/2, dimensions.totalLength)); // Top wall
-                    scene.add(createWall(dimensions.totalLength - 6.5, dimensions.wallThickness, dimensions.mainWidth, (dimensions.totalLength - 6.5)/2 + 6.5, Math.PI/2));
-                    scene.add(createWall(dimensions.backWidth - dimensions.mainWidth, dimensions.wallThickness, dimensions.mainWidth + (dimensions.backWidth - dimensions.mainWidth)/2, 6.5));
-                    scene.add(createWall(6.5 - dimensions.backAreaLength, dimensions.wallThickness, dimensions.backWidth, dimensions.backAreaLength + (6.5 - dimensions.backAreaLength)/2, Math.PI/2));
-                    scene.add(createWall(dimensions.backWidth, dimensions.wallThickness, dimensions.backWidth / 2, dimensions.backAreaLength));
-                    scene.add(createWall(dimensions.backAreaLength, dimensions.wallThickness, dimensions.backWidth, dimensions.backAreaLength/2, Math.PI/2));
-
-                    // Inner walls
-                    scene.add(createWall(dimensions.totalLength, dimensions.wallThickness, dimensions.mainVerticalDividerX, dimensions.totalLength/2, Math.PI/2));
-                    scene.add(createWall(dimensions.mainVerticalDividerX, dimensions.wallThickness, dimensions.mainVerticalDividerX/2, dimensions.frontAreaLength));
-                    scene.add(createWall(dimensions.mainVerticalDividerX, dimensions.wallThickness, dimensions.mainVerticalDividerX/2, dimensions.frontAreaLength + dimensions.midAreaLength1));
+                    new MTLLoader().load(mtlPath, (materials) => {
+                        materials.preload();
+                        new OBJLoader().setMaterials(materials).load(objPath, (object) => {
+                            const box = new THREE.Box3().setFromObject(object);
+                            const center = box.getCenter(new THREE.Vector3());
+                            object.position.sub(center);
+                            scene.add(object);
+                        }, undefined, (e) => { throw new Error(`Could not load OBJ file at '${objPath}'. Check the file name and path in your repository.`); });
+                    }, undefined, (e) => {
+                        console.warn(`Could not load MTL file at '${mtlPath}'. Loading OBJ with basic materials.`);
+                        new OBJLoader().load(objPath, (object) => {
+                            const box = new THREE.Box3().setFromObject(object);
+                            const center = box.getCenter(new THREE.Vector3());
+                            object.position.sub(center);
+                            scene.add(object);
+                        }, undefined, (e) => { throw new Error(`Could not load OBJ file at '${objPath}'. Check the file name and path in your repository.`); });
+                    });
                     
-                    camera.position.set(8, 10, 15);
-                    controls.update();
                     function animate() { requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); }
                     animate();
                     window.addEventListener('resize', () => { camera.aspect = chartBody.clientWidth / chartBody.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(chartBody.clientWidth, chartBody.clientHeight); }, false);
-                } catch (e) { chartHeader.innerHTML = `<h3>Error Rendering 3D View</h3>`; chartBody.innerHTML = `<div style="color:red; text-align:center; padding: 2rem;"><p>${e.message}</p></div>`; }
+                } catch (e) {
+                    chartHeader.innerHTML = `<h3>Error Rendering 3D View</h3>`;
+                    chartBody.innerHTML = `<div style="color:red; text-align:center; padding: 2rem;"><p>${e.message}</p></div>`;
+                }
             };
             
             const drawChart = (stepIndex, animate = true) => {
@@ -193,7 +175,7 @@
                 try {
                     const plotConfig = { style: { fontSize: "18px", fontFamily: "Lato, sans-serif", background: "transparent" }, width: 800, height: 600, marginLeft: 90, marginBottom: 100 };
                     switch (stepIndex) {
-                        case 1: case 2: init3DView(); break;
+                        case 1: case 2: initSweetHome3DView(); break;
                         case 3:
                             chartHeader.innerHTML = `<h3>Production Model: High-Density Throughput</h3>`;
                             chartBody.innerHTML = `<img src="https://i.imgur.com/vHq4L4D.png" alt="Floorplan of the venue" style="width:100%; height:100%; object-fit:contain; border-radius:8px;">`;
@@ -255,8 +237,8 @@
                             break;
                     }
                 } catch (e) {
-                    chartHeader.innerHTML = `<h3>Error Rendering Chart for Step ${stepIndex}</h3>`;
-                    chartBody.innerHTML = `<div style="color:red; text-align:center; padding: 2rem;"><p>There was an issue displaying this visualization.</p><p style="font-family: monospace; font-size: 0.8em;">${e.message}</p></div>`;
+                    chartHeader.innerHTML = `<h3>Error Rendering Visualization for Step ${stepIndex}</h3>`;
+                    chartBody.innerHTML = `<div style="color:red; text-align:center; padding: 2rem;"><p>There was an issue displaying this component.</p><p style="font-family: monospace; font-size: 0.8em;">${e.message}</p></div>`;
                 }
             };
 
