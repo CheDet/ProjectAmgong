@@ -42,7 +42,9 @@
         .styled-table tbody tr { border-bottom: 1px solid var(--border-color); }
         .styled-table tbody tr:nth-of-type(even) { background-color: var(--bg-color); }
         .styled-table .total-row { font-weight: 700; background-color: #e2e6ea; }
-        .gantt-container { width: 100%; height: 100%; padding: 1rem; display: flex; flex-direction: column; justify-content: center; }
+        
+        /* Styles for Gantt and SOP Flowchart */
+        .gantt-container, .flowchart-grid { width: 100%; height: 100%; padding: 1rem; display: flex; flex-direction: column; justify-content: center; }
         .gantt-row { display: flex; align-items: center; margin-bottom: 1rem; }
         .gantt-label { width: 100px; font-weight: 700; font-size: 1em; }
         .gantt-bar-container { flex-grow: 1; display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; }
@@ -52,12 +54,10 @@
         .gantt-legend { display: flex; gap: 20px; justify-content: center; margin-top: 20px; font-size: 0.9em; }
         .legend-item { display: flex; align-items: center; gap: 8px; }
         .legend-color { width: 20px; height: 20px; border-radius: 4px; }
-        
-        /* Styles for SOP Flowchart */
-        .flowchart { font-family: 'Lato', sans-serif; text-align: center; }
-        .flow-step { background-color: #fff; border: 2px solid var(--border-color); border-radius: 8px; padding: 15px; margin: 0 auto 15px auto; max-width: 300px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .flowchart-grid { display: grid; grid-template-columns: 1fr auto 1fr; grid-template-rows: auto auto auto; gap: 15px; align-items: center; }
+        .flow-step { background-color: #fff; border: 2px solid var(--border-color); border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .flow-step h4 { margin: 0 0 5px 0; color: var(--accent-dark); }
-        .flow-arrow { font-size: 2rem; color: var(--accent-color); font-weight: bold; margin-bottom: 15px; }
+        .flow-arrow { font-size: 2.5rem; color: var(--accent-color); font-weight: bold; text-align: center; }
 
         @media (max-width: 900px) { #scrolly-container { flex-direction: column; } #scrolly-graphics, #scrolly-text { width: 100%; } figure { position: relative; height: 60vh; } .chart-container { height: calc(100% - 40px); width: calc(100% - 40px); } article { padding: 20px; } .step { margin-bottom: 40px; } }
     </style>
@@ -123,9 +123,9 @@
             
             const headsSlider = document.getElementById('heads-slider');
             const headsValueSpan = document.getElementById('heads-value');
-            headsSlider.addEventListener('input', (e) => { const heads = parseInt(e.target.value); const percentage = ((heads / config.capacity.headsPerMonth) * 100).toFixed(0); headsValueSpan.textContent = `${heads} (${percentage}%)`; config.financials.headsSold = heads; if (currentStep === 8) drawChart(8, false); }); // Adjusted step
-            document.getElementById('price-slider').addEventListener('input', (e) => { document.getElementById('price-value').textContent = parseFloat(e.target.value).toFixed(2); config.financials.avgPrice = parseFloat(e.target.value); if (currentStep === 8) drawChart(8, false); }); // Adjusted step
-            document.getElementById('energy-slider').addEventListener('input', (e) => { document.getElementById('energy-value').textContent = parseFloat(e.target.value).toFixed(1); config.financials.costs.lightHours = parseFloat(e.target.value); if (currentStep === 8) drawChart(8, false); }); // Adjusted step
+            headsSlider.addEventListener('input', (e) => { const heads = parseInt(e.target.value); const percentage = ((heads / config.capacity.headsPerMonth) * 100).toFixed(0); headsValueSpan.textContent = `${heads} (${percentage}%)`; config.financials.headsSold = heads; if (currentStep === 8) drawChart(8, false); });
+            document.getElementById('price-slider').addEventListener('input', (e) => { document.getElementById('price-value').textContent = parseFloat(e.target.value).toFixed(2); config.financials.avgPrice = parseFloat(e.target.value); if (currentStep === 8) drawChart(8, false); });
+            document.getElementById('energy-slider').addEventListener('input', (e) => { document.getElementById('energy-value').textContent = parseFloat(e.target.value).toFixed(1); config.financials.costs.lightHours = parseFloat(e.target.value); if (currentStep === 8) drawChart(8, false); });
 
             const calculateFinancials = () => { const h=config.financials.headsSold,r=h*config.financials.avgPrice,e=(102 * 60 * config.financials.costs.lightHours / 1000) * 30 * config.financials.costs.electricityTariff,s=h*config.financials.costs.seedsMediaPerHead,n=h*config.financials.costs.nutrientsPerHead,p=h*config.financials.costs.packagingPerHead,a=config.financials.costs.laborPerMonth,c=config.financials.costs.otherPerMonth;return{revenue:r,elecCost:e,seedsMediaCost:s,nutrientsCost:n,packagingCost:p,labor:a,other:c,ebitda:r-e-s-n-p-a-c} };
             const formatCurrency = (value) => `RM ${value.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -147,15 +147,24 @@
                             chartHeader.innerHTML = `<h3>Production Model: High-Density Throughput</h3>`;
                             chartBody.innerHTML = `<img src="https://i.imgur.com/vHq4L4D.png" alt="Floorplan of the venue" style="width:100%; height:100%; object-fit:contain; border-radius:8px;">`;
                             break;
-                        case 4: // Gantt Chart
+                        case 4:
                             chartHeader.innerHTML = `<h3>The Process: Continuous Harvest Cycle</h3>`;
                             chartBody.innerHTML = `<div class="gantt-container"><div class="gantt-row"><div class="gantt-label"><strong>Weeks →</strong></div><div class="gantt-bar-container">${[1,2,3,4,5,6,7,8].map(w=>`<div style="text-align:center;font-weight:bold;">W${w}</div>`).join("")}</div></div><div class="gantt-row"><div class="gantt-label">Batch A</div><div class="gantt-bar-container"><div class="gantt-bar nursery" style="grid-column:1 / span 2"></div><div class="gantt-bar nft" style="grid-column:3 / span 4"></div><div class="gantt-bar harvest" style="grid-column:7 / span 1">✓</div></div></div><div class="gantt-row"><div class="gantt-label">Batch B</div><div class="gantt-bar-container"><div class="gantt-bar nursery" style="grid-column:2 / span 2"></div><div class="gantt-bar nft" style="grid-column:4 / span 4"></div><div class="gantt-bar harvest" style="grid-column:8 / span 1">✓</div></div></div><div class="gantt-row"><div class="gantt-label">Batch C</div><div class="gantt-bar-container"><div class="gantt-bar nursery" style="grid-column:3 / span 2"></div><div class="gantt-bar nft" style="grid-column:5 / span 4"></div></div></div><div class="gantt-legend"><div class="legend-item"><div class="legend-color nursery"></div><span>Nursery Phase</span></div><div class="legend-item"><div class="legend-color nft"></div><span>NFT Growth Phase</span></div><div class="legend-item"><div class="legend-color harvest"></div><span>Harvest Week</span></div></div></div>`;
                             break;
-                        case 5: // SOP Flowchart
+                        case 5:
                              chartHeader.innerHTML = `<h3>Operational Excellence: Standard Operating Procedure</h3>`;
-                             chartBody.innerHTML = `<div class="flowchart"><div class="flow-step"><h4>1. Sanitize & Seed</h4><p>Rockwool cubes are seeded and placed in dark germination trays.</p></div><div class="flow-arrow">↓</div><div class="flow-step"><h4>2. Nursery Phase (2 Weeks)</h4><p>Seedlings develop under low-intensity lights with a weak nutrient solution.</p></div><div class="flow-arrow">↓</div><div class="flow-step"><h4>3. Transplant to NFT</h4><p>Healthy seedlings are moved to the main systems.</p></div><div class="flow-arrow">↓</div><div class="flow-step"><h4>4. Growth Phase (4 Weeks)</h4><p>Plants mature with full-strength nutrients. Daily pH/EC checks.</p></div><div class="flow-arrow">↓</div><div class="flow-step"><h4>5. Harvest & Pack</h4><p>Mature lettuce is harvested, chilled, and packed for delivery.</p></div></div>`;
+                             chartBody.innerHTML = `<div class="flowchart-grid">
+                                <div class="flow-step" style="grid-column: 1; grid-row: 1;"><h4>1. Sanitize & Seed</h4><p>Trays are sanitized & seeded.</p></div>
+                                <div class="flow-arrow" style="grid-column: 1; grid-row: 2;">↓</div>
+                                <div class="flow-step" style="grid-column: 1; grid-row: 3;"><h4>2. Nursery (2 Wks)</h4><p>Seedlings develop under low light.</p></div>
+                                <div class="flow-arrow" style="grid-column: 2; grid-row: 3;">→</div>
+                                <div class="flow-step" style="grid-column: 3; grid-row: 3;"><h4>3. Transplant</h4><p>Move to main NFT systems.</p></div>
+                                <div class="flow-arrow" style="grid-column: 3; grid-row: 4;">↓</div>
+                                <div class="flow-step" style="grid-column: 3; grid-row: 5;"><h4>4. Growth (4 Wks)</h4><p>Mature with daily nutrient checks.</p></div>
+                                <div class="flow-arrow" style="grid-column: 2; grid-row: 5;">←</div>
+                                <div class="flow-step" style="grid-column: 1; grid-row: 5;"><h4>5. Harvest & Pack</h4><p>Harvested, chilled, and packed.</p></div>
+                             </div>`;
                             break;
-                        // All subsequent cases are incremented by 1
                         case 6:
                             const revenueData = [{ segment: "B2B (Cafes/Grocers)", value: (config.financials.headsSold * 0.6) * 5.50 }, { segment: "D2C (Subscriptions)", value: (config.financials.headsSold * 0.4) * 7.50 }];
                             chartHeader.innerHTML = `<h3>Projected Monthly Revenue</h3><p>Based on ${config.financials.headsSold} heads sold per month.</p>`;
@@ -171,7 +180,7 @@
                             chartBody.append(costChart);
                             if(animate) animateBarChart(costChart);
                             break;
-                        case 8: // Financial Waterfall
+                        case 8:
                             const data = calculateFinancials();
                             const bridgeData = [{ stage: "Revenue", value: data.revenue, base: 0, cumulative: data.revenue, type: 'positive' }, { stage: "Costs", value: -(data.elecCost + data.seedsMediaCost + data.nutrientsCost + data.packagingCost + data.labor + data.other), base: data.revenue, cumulative: data.ebitda, type: 'negative' }];
                             const ebitdaResult = { stage: "EBITDA", value: data.ebitda, type: 'total' };
@@ -183,7 +192,7 @@
                             chartBody.append(waterfallChart);
                             if(animate) animateWaterfall(waterfallChart);
                             break;
-                        case 9: // Investment Breakdown
+                        case 9:
                             const capexChartData = [{category: "LEDs", value: 16830}, {category: "Racks", value: 16150}, {category: "Other", value: 8860}];
                             const opexChartData = [{category: "Electricity", value: 16932}, {category: "Labor", value: 10800}, {category: "Consumables", value: 9200}, {category: "Packaging/Other", value: 2850}];
                             const capexTotal = capexChartData.reduce((a,b)=> a+b.value, 0);
@@ -196,14 +205,14 @@
                             document.getElementById('opex-donut').append(opexDonut);
                             if(animate) { animateDonut(capexDonut); animateDonut(opexDonut); }
                             break;
-                        case 10: // Risk Matrix
+                        case 10:
                             const riskData = [ { risk: "Heat/Humidity Spike", likelihood: 4, impact: 4, mitigation: "Mitigation: High-capacity exhaust fans venting via balcony and constant internal airflow." }, { risk: "Power Outage", likelihood: 3, impact: 4, mitigation: "Mitigation: Dedicated UPS system for all critical water and air pumps." }, { risk: "Price Compression", likelihood: 3, impact: 3, mitigation: "Mitigation: Secure 6-month MOUs for 60% of volume; build premium D2C brand." }, { risk: "Pest Infestation", likelihood: 2, impact: 5, mitigation: "Mitigation: Biosecurity protocols including screened intakes and strict sanitation SOPs." }, { risk: "QA Drift (pH/EC)", likelihood: 3, impact: 2, mitigation: "Mitigation: Redundant, calibrated meters and daily parameter logging." }];
                             chartHeader.innerHTML = `<h3>Risk & Mitigation Matrix</h3><p>Hover over points for mitigation details</p>`;
                             const riskChart = Plot.plot({ ...plotConfig, x: { domain: [1, 5.5], label: "Likelihood →", ticks: 5, tickFontSize: 14, labelFontSize: 16, fontWeight: 700 }, y: { domain: [1, 5.5], label: "Impact →", ticks: 5, tickFontSize: 14, labelFontSize: 16, fontWeight: 700 }, color: { scheme: "reds", legend: true }, marks: [Plot.dot(riskData, { x: "likelihood", y: "impact", r: 25, fill: "impact", title: "mitigation" }), Plot.text(riskData, { x: "likelihood", y: "impact", text: "risk", dy: -40, fontWeight: "bold", fontSize: 16 })] });
                             chartBody.append(riskChart);
                             if(animate) animateScatterPlot(riskChart);
                             break;
-                        case 11: // The Ask
+                        case 11:
                             chartHeader.innerHTML = `<h3>A Partnership for Growth</h3>`;
                             chartBody.innerHTML = `<div style="text-align:center; padding-top: 5vh; font-size: 1.5rem; color: var(--accent-dark);"><h2 style="font-size:2.5rem;">Ready to Cultivate a Sustainable Future</h2></div>`;
                             break;
