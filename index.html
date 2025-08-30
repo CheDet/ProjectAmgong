@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usable Floor Area Diagnostic Tool</title>
+    <title>Model Object Diagnostic Tool</title>
     <style>
         body { margin: 0; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
         #info { text-align: center; color: black; font-size: 1.5em; padding: 2em; border: 2px solid #ccc; border-radius: 10px; }
@@ -21,7 +21,7 @@
         import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 
         const infoDiv = document.getElementById('info');
-        console.log("--- Starting Usable Floor Area Diagnostic ---");
+        console.log("--- Starting Model Object Diagnostic ---");
 
         try {
             const loader = new OBJLoader();
@@ -30,28 +30,21 @@
             loader.load(
                 objFileName,
                 function (object) {
-                    let totalUsableArea = 0;
-                    const floorDetails = [];
+                    const allObjectDetails = [];
 
                     // Iterate through all parts of the loaded model
                     object.traverse(function (child) {
-                        // We are looking for Meshes that are named 'Floor_...' which is standard for Sweet Home 3D floors
-                        if (child instanceof THREE.Mesh && child.name.startsWith('Floor_')) {
+                        if (child instanceof THREE.Mesh) {
                             
-                            // Calculate the size (dimensions) of this floor piece
+                            // Calculate the size (dimensions) of this piece
                             const box = new THREE.Box3().setFromObject(child);
                             const size = box.getSize(new THREE.Vector3());
 
-                            // The area of a horizontal floor is its width (x) times its depth (z)
-                            // We divide by 10000 to convert from cm^2 (SH3D's default) to m^2
-                            const area = (size.x * size.z) / 10000;
-                            totalUsableArea += area;
-
-                            floorDetails.push({
+                            allObjectDetails.push({
                                 name: child.name,
-                                width_m: (size.x / 100).toFixed(2),
-                                depth_m: (size.z / 100).toFixed(2),
-                                area_m2: area.toFixed(2)
+                                width_cm: size.x.toFixed(2),
+                                height_cm: size.y.toFixed(2),
+                                depth_cm: size.z.toFixed(2)
                             });
                         }
                     });
@@ -59,11 +52,11 @@
                     // --- THIS IS THE CRUCIAL PART ---
                     console.log("--- DIAGNOSTIC RESULTS ---");
                     console.log("Model Loaded Successfully.");
-                    console.table(floorDetails); // A clean table of each floor piece found
-                    console.log(`TOTAL USABLE FLOOR AREA: ${totalUsableArea.toFixed(2)} square meters.`);
+                    console.log("Found the following objects in your file:");
+                    console.table(allObjectDetails); // A clean table of EVERY object found
                     console.log("--------------------------");
 
-                    infoDiv.innerHTML = `<strong style="color: green;">Diagnostic Complete!</strong><br>Please copy the full output from the F12 developer console and send it back to me.`;
+                    infoDiv.innerHTML = `<strong style="color: green;">Diagnostic Complete!</strong><br>Please copy the full table from the F12 developer console and send it back to me.`;
                 },
                 function (xhr) {
                     if (xhr.lengthComputable) {
