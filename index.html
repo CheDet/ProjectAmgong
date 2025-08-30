@@ -44,9 +44,9 @@
             const scene = new THREE.Scene();
             scene.background = new THREE.Color(0xeeeeee);
 
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(10, 10, 10);
-
+            // --- FIX #1: Camera clipping plane corrected ---
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 1000);
+            
             const renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
@@ -76,28 +76,44 @@
                         objFileName,
                         function (object) {
                             infoDiv.textContent = 'Model Loaded Successfully! You can now interact.';
+                            
+                            // --- FIX #2: Auto-center and auto-zoom the camera ---
                             const box = new THREE.Box3().setFromObject(object);
+                            const size = box.getSize(new THREE.Vector3()).length();
                             const center = box.getCenter(new THREE.Vector3());
-                            object.position.sub(center);
+                            
+                            object.position.sub(center); // Center the model at the origin
+
+                            camera.position.copy(center);
+                            camera.position.x += size / 1.5;
+                            camera.position.y += size / 2.0;
+                            camera.position.z += size / 1.5;
+                            camera.lookAt(center);
+                            // --- End of auto-zoom fix ---
+                            
                             scene.add(object);
                         },
                         function (xhr) {
-                            const percentLoaded = (xhr.loaded / xhr.total * 100);
-                            infoDiv.textContent = `Loading OBJ: ${percentLoaded.toFixed(2)}%`;
+                            if (xhr.lengthComputable) {
+                                const percentLoaded = (xhr.loaded / xhr.total * 100);
+                                infoDiv.textContent = `Loading OBJ: ${percentLoaded.toFixed(2)}%`;
+                            }
                         },
                         function (error) {
                             console.error('An error happened during OBJ loading:', error);
-                            infoDiv.innerHTML = `<span style="color: red;"><strong>Error:</strong> Could not load the OBJ file. Check the browser console (F12) for a 404 error. Ensure 'FloorPlan_Hydro.obj' is in the root of your GitHub repository and the name is exact.</span>`;
+                            infoDiv.innerHTML = `<span style="color: red;"><strong>Error:</strong> Could not load the OBJ file. Ensure 'FloorPlan_Hydro.obj' is in the root of your repository and the name is exact.</span>`;
                         }
                     );
                 },
                 function (xhr) {
-                    const percentLoaded = (xhr.loaded / xhr.total * 100);
-                    infoDiv.textContent = `Loading MTL: ${percentLoaded.toFixed(2)}%`;
+                    if (xhr.lengthComputable) {
+                        const percentLoaded = (xhr.loaded / xhr.total * 100);
+                        infoDiv.textContent = `Loading MTL: ${percentLoaded.toFixed(2)}%`;
+                    }
                 },
                 function (error) {
                     console.error('An error happened during MTL loading:', error);
-                    infoDiv.innerHTML = `<span style="color: red;"><strong>Error:</strong> Could not load the MTL file. Check the browser console (F12) for a 404 error. Ensure 'FloorPlan_Hydro.mtl' is in the root of your GitHub repository and the name is exact.</span>`;
+                    infoDiv.innerHTML = `<span style="color: red;"><strong>Error:</strong> Could not load the MTL file. Ensure 'FloorPlan_Hydro.mtl' is in the root of your repository and the name is exact.</span>`;
                 }
             );
 
