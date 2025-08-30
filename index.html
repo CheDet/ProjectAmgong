@@ -3,233 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projek Sprout Madani - A Proposal for the Sejati Madani Grant</title>
+    <title>Usable Floor Area Diagnostic Tool</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
-        :root {
-            --text-color: #212529; --bg-color: #f8f9fa; --accent-color: #007A4D;
-            --accent-dark: #005a38; --light-gray: #e9ecef; --border-color: #dee2e6;
-        }
-        body { font-family: 'Lato', sans-serif; margin: 0; color: var(--text-color); background-color: var(--bg-color); }
-        #scrolly-container { display: flex; flex-direction: row; }
-        #scrolly-graphics { width: 50%; position: relative; }
-        #scrolly-text { width: 50%; }
-        figure { position: sticky; top: 0; height: 100vh; margin: 0; display: flex; justify-content: center; align-items: center; }
-        .chart-container { width: calc(100% - 80px); height: calc(100vh - 80px); background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.08); border-radius: 12px; padding: 25px; display: flex; flex-direction: column; }
-        #chart-header { padding-bottom: 20px; flex-shrink: 0; border-bottom: 1px solid var(--light-gray); margin-bottom: 20px; }
-        #chart-header h3 { margin: 0; font-size: 1.8rem; color: var(--accent-dark); font-weight: 700; }
-        #chart-header p { margin: 5px 0 0 0; font-size: 1rem; color: #6c757d; }
-        #chart-body { flex-grow: 1; min-height: 0; display: flex; align-items: center; justify-content: center; position: relative; }
-        #chart-body canvas { display: block; }
-        article { padding: 5vh 40px; }
-        .step { margin-bottom: 85vh; padding: 25px; background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border-radius: 12px; border: 1px solid var(--border-color); }
-        .step:last-child { margin-bottom: 30vh; }
-        .hero { height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://i.imgur.com/vHq4L4D.png') no-repeat center center; background-size: cover; color: white; padding: 0 5%; }
-        .hero h1 { font-size: 3.5rem; font-weight: 700; } .hero p { font-size: 1.25rem; font-weight: 300; max-width: 700px; }
-        .step h2 { color: var(--accent-color); margin-top: 0; font-size: 1.8rem; font-weight: 700; }
-        .step p, .step li { line-height: 1.7; font-weight: 400; font-size: 1.05rem; }
-        .justification { font-size: 0.9em; color: #6c757d; margin-top: 15px; border-left: 3px solid var(--light-gray); padding-left: 15px;}
-        strong { font-weight: 700; }
-        .interactive-controls { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 20px; }
-        .slider-group label { display: block; margin-bottom: 8px; font-weight: 700; }
-        .slider-group input[type="range"] { width: 100%; cursor: pointer; }
-        .slider-group span { font-weight: 700; color: var(--accent-color); font-size: 1.1em; }
-        .table-wrapper { margin-top: 25px; }
-        .styled-table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
-        .styled-table caption { font-size: 1.2em; font-weight: 700; color: var(--accent-dark); text-align: left; padding: 10px 0; }
-        .styled-table thead tr { background-color: var(--accent-color); color: white; text-align: left; }
-        .styled-table th, .styled-table td { padding: 12px 15px; }
-        .styled-table tbody tr { border-bottom: 1px solid var(--border-color); }
-        .styled-table tbody tr:nth-of-type(even) { background-color: var(--bg-color); }
-        .styled-table .total-row { font-weight: 700; background-color: #e2e6ea; }
-        
-        /* Styles for Gantt and SOP Flowchart */
-        .gantt-container, .flowchart-grid { width: 100%; height: 100%; padding: 1rem; display: flex; flex-direction: column; justify-content: center; }
-        .gantt-row { display: flex; align-items: center; margin-bottom: 1rem; }
-        .gantt-label { width: 100px; font-weight: 700; font-size: 1em; }
-        .gantt-bar-container { flex-grow: 1; display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; }
-        .gantt-bar { height: 30px; border-radius: 4px; }
-        .nursery { background-color: #fca5a5; } .nft { background-color: #86efac; }
-        .harvest { background-color: var(--accent-color); color: white; display:flex; justify-content:center; align-items:center; font-size:1em; font-weight: bold;}
-        .gantt-legend { display: flex; gap: 20px; justify-content: center; margin-top: 20px; font-size: 0.9em; }
-        .legend-item { display: flex; align-items: center; gap: 8px; }
-        .legend-color { width: 20px; height: 20px; border-radius: 4px; }
-        .flowchart-grid { display: grid; grid-template-columns: 1fr auto 1fr; grid-template-rows: auto auto auto; gap: 15px; align-items: center; }
-        .flow-step { background-color: #fff; border: 2px solid var(--border-color); border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .flow-step h4 { margin: 0 0 5px 0; color: var(--accent-dark); }
-        .flow-arrow { font-size: 2.5rem; color: var(--accent-color); font-weight: bold; text-align: center; }
-
-        @media (max-width: 900px) { #scrolly-container { flex-direction: column; } #scrolly-graphics, #scrolly-text { width: 100%; } figure { position: relative; height: 60vh; } .chart-container { height: calc(100% - 40px); width: calc(100% - 40px); } article { padding: 20px; } .step { margin-bottom: 40px; } }
+        body { margin: 0; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        #info { text-align: center; color: black; font-size: 1.5em; padding: 2em; border: 2px solid #ccc; border-radius: 10px; }
     </style>
 </head>
 <body>
-    <header class="hero"><!-- ... --></header>
-    <main id="scrolly-container">
-        <section id="scrolly-graphics">
-            <figure><div id="chart" class="chart-container"><div id="chart-header"></div><div id="chart-body"></div></div></figure>
-        </section>
-        <section id="scrolly-text">
-            <article>
-                <div class="step" data-step="1"><h2>The Strategic Imperative</h2><p>Malaysia's food security is a national priority. Our analysis identifies a clear opportunity to displace volatile foreign imports with consistent, high-quality local produce. The urban consumer demand for fresh, pesticide-free food is no longer a niche—it is a mainstream market requirement.</p></div>
-                <div class="step" data-step="2"><h2>The Asset: A Zero-Cost Venue</h2><p>Our foundational asset is a 120m² rent-free shophouse. This eliminates a significant operational expense, fundamentally altering the venture's risk profile and accelerating the path to profitability. The 3D model shows the exact layout and scale of the space.</p><div class="justification"><p><strong>Interact with the model:</strong><br>• <strong>Left-Click & Drag:</strong> Rotate Horizontally<br>• <strong>Right-Click & Drag:</strong> Pan (Move)<br>• <strong>Scroll:</strong> Zoom</p></div></div>
-                <div class="step" data-step="3"><h2>Production Model: High-Density Throughput</h2><p>We will deploy a 3-tier Nutrient Film Technique (NFT) system, a globally proven method for leafy green cultivation. This technology enables a projected steady-state output of <strong>2,550 heads of premium lettuce per month</strong>.</p></div>
-                <div class="step" data-step="4"><h2>The Process: Continuous Harvest Cycle</h2><p>Our farm operates like an assembly line to ensure consistent output. We seed a new batch of lettuce every week. As the Gantt chart illustrates, each batch goes through a 2-week nursery phase followed by a 4-week growth phase in the main NFT systems. After an initial 6-week ramp-up, this staggered process allows us to <strong>harvest a full batch of ~640 heads every single week</strong>, guaranteeing a fresh and predictable supply for our customers.</p></div>
-                <div class="step" data-step="5"><h2>Operational Excellence: Standard Operating Procedure (SOP)</h2>
-                    <p>To ensure consistency, quality, and efficiency, all farm operations are governed by a strict Standard Operating Procedure. This SOP provides workers with a clear, repeatable process for every stage of cultivation, minimizing errors and maximizing yield.</p>
-                    <div class="justification">
-                        <p><strong>1. Sanitation:</strong> All trays, channels, and reservoirs are sanitized with a food-grade solution between every growth cycle.</p>
-                        <p><strong>2. Seeding (Week 1):</strong> One seed is placed into a pre-soaked rockwool cube in a 10x20 propagation tray. Trays are covered with a humidity dome and kept in a dark germination area for 48-72 hours.</p>
-                        <p><strong>3. Nursery (Weeks 1-2):</strong> Once sprouted, seedlings are moved under low-intensity LEDs. They are fed a diluted nutrient solution (EC 0.8) for two weeks until their first true leaves develop.</p>
-                        <p><strong>4. Transplanting (Week 3):</strong> Healthy seedlings are transferred into net pots and placed into the main NFT systems. Spacing is set according to lettuce variety.</p>
-                        <p><strong>5. Nutrient Management (Weeks 3-6):</strong> The nutrient solution in the main reservoirs is monitored daily. pH is maintained at 5.8-6.2 and Electrical Conductivity (EC) is maintained at 1.6-1.8 mS/cm. The solution is fully replaced every two weeks.</p>
-                        <p><strong>6. Harvest (End of Week 6):</strong> Lettuce is harvested by slicing the base. It is immediately moved to a chilled packing area to preserve freshness before delivery.</p>
-                    </div>
-                </div>
-                <div class="step" data-step="6"><h2>Go-to-Market: A De-Risked Revenue Strategy</h2><p>Our revenue model is built on resilience, targeting two distinct customer segments. This approach balances the stability of wholesale with the higher margins of direct retail sales.</p><div class="justification"><p><strong>B2B (Business-to-Business):</strong> This segment ensures consistent cash flow and operational stability. We will secure volume off-take agreements with local businesses.</p><ul><li><strong>Example Cafes in Melaka:</strong> The Daily Fix Cafe, Calanthe Art Cafe, Heesan Kopi.</li><li><strong>Example Grocers/Hotels:</strong> Jaya Grocer at AEON Melaka, The Majestic Malacca, Heeren Mansion.</li></ul><p><strong>D2C (Direct-to-Consumer):</strong> A premium subscription service captures maximum value per head and builds a loyal community brand around freshness and traceability.</p></div></div>
-                <div class="step" data-step="7"><h2>Unit Economics: Granular Cost Control</h2><p>Operational excellence is paramount. This granular breakdown shows that electricity is the primary variable cost, followed by specific, per-head consumables. This allows for targeted efficiency improvements.</p><div class="justification"><strong>Basis of Calculation:</strong><p>• <strong>Electricity:</strong> Based on 102 LED bars (60W ea.) running for 14 hrs/day at TNB Tariff B (RM 0.441/kWh).</p><p>• <strong>Consumables:</strong> Sourced from local suppliers (e.g., CityFarm, Shopee) and costed per head (~RM 0.80/head).</p><p>• <strong>Labor:</strong> Modest stipend for 2 part-time staff from the local community.</p></div></div>
-                <div class="step" data-step="8"><h2>Financial Viability & Profit Sharing</h2><p>This interactive waterfall chart models our path to profitability, incorporating the Sejati Madani 60/40 profit-sharing scheme. <strong>Stress-test our model against severe market pressures using the sliders.</strong></p><div class="interactive-controls"><div class="slider-group"><label>Heads Sold per Month: <span id="heads-value">2295 (90%)</span></label><input type="range" id="heads-slider" min="1200" max="2550" step="5" value="2295"></div><div class="slider-group"><label>Avg. Price/Head (RM): <span id="price-value">6.50</span></label><input type="range" id="price-slider" min="3.5" max="8.0" step="0.1" value="6.5"></div><div class="slider-group"><label>Light Hours/Day: <span id="energy-value">14</span></label><input type="range" id="energy-slider" min="12" max="18" step="0.5" value="14"></div></div></div>
-                <div class="step" data-step="9">
-                    <h2>The Investment: Detailed Breakdown</h2><p>We are requesting a grant of <strong>RM 89,846</strong>. This is precisely allocated to cover all one-time capital expenditures and a full six-month operational runway to ensure the venture reaches a self-sustaining state.</p>
-                    <div class="table-wrapper"><table class="styled-table"><caption>Capital Expenditure (CapEx)</caption><thead><tr><th>Item</th><th>Qty</th><th>Unit Price (RM)</th><th>Total (RM)</th></tr></thead><tbody><tr><td>3-Tier NFT Racks</td><td>17</td><td>950</td><td>16,150</td></tr><tr><td>LED Grow Bars</td><td>102</td><td>165</td><td>16,830</td></tr><tr><td>Reservoir Tanks & Pumps</td><td>9 sets</td><td>230</td><td>2,070</td></tr><tr><td>Propagation Station</td><td>1</td><td>800</td><td>800</td></tr><tr><td>Environmental Control</td><td>1 lot</td><td>-</td><td>3,390</td></tr><tr><td>Plumbing & Wiring</td><td>1 lot</td><td>-</td><td>1,500</td></tr><tr><td>Other Setup (Pots, etc.)</td><td>1 lot</td><td>-</td><td>1,100</td></tr><tr class="total-row"><td><strong>Subtotal CapEx</strong></td><td colspan="2"></td><td><strong>41,840</strong></td></tr></tbody></table></div>
-                    <div class="table-wrapper"><table class="styled-table"><caption>6-Month Operational Expenditure (OpEx)</caption><thead><tr><th>Item</th><th>Qty</th><th>Monthly (RM)</th><th>Total (RM)</th></tr></thead><tbody><tr><td>Electricity Bill</td><td>6 mo</td><td>2,822</td><td>16,932</td></tr><tr><td>Labor Stipend</td><td>6 mo</td><td>1,800</td><td>10,800</td></tr><tr><td>Consumables (Seeds, etc.)</td><td>6 mo</td><td>1,533</td><td>9,200</td></tr><tr><td>Packaging</td><td>6 mo</td><td>400</td><td>2,400</td></tr><tr><td>Miscellaneous</td><td>6 mo</td><td>75</td><td>450</td></tr><tr class="total-row"><td><strong>Subtotal 6-Mo OpEx</strong></td><td colspan="2"></td><td><strong>39,782</strong></td></tr></tbody></table></div>
-                </div>
-                <div class="step" data-step="10"><h2>Risk Mitigation: Proactive & Comprehensive</h2><p>We have identified and planned for key operational risks. <strong>Hover over each point</strong> to see the specific, pre-planned mitigation strategy we will deploy, ensuring operational resilience from day one.</p></div>
-                <div class="step" data-step="11"><h2>The Ask & Partnership</h2><p>An investment of <strong>RM 89,846</strong> will catalyze a financially sustainable venture that strengthens food security, creates jobs, and empowers the local community. We invite you to partner with us.</p></div>
-            </article>
-        </section>
-    </main>
-    <footer class="footer"><p><strong>Projek Sprout Madani</strong> | &copy; 2025</p></footer>
+    <div id="info">Running diagnostics...<br>Please open the F12 Developer Console.</div>
 
-    <script src="https://unpkg.com/scrollama"></script>
-    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"></script>
-    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
-    <script type="importmap">{"imports": {"three": "https://unpkg.com/three@0.163.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.163.0/examples/jsm/"}}</script>
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com/three@0.163.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.163.0/examples/jsm/" } }
+    </script>
 
     <script type="module">
         import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-        import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
-        
-        document.addEventListener('DOMContentLoaded', function () {
-            const config = { capacity: { headsPerMonth: 2550 }, financials: { headsSold: 2295, avgPrice: 6.50, costs: { lightHours: 14, electricityTariff: 0.441, seedsMediaPerHead: 0.25, nutrientsPerHead: 0.20, packagingPerHead: 0.35, laborPerMonth: 1800, otherPerMonth: 75 } } };
-            const article = document.querySelector("#scrolly-text article");
-            const steps = article.querySelectorAll(".step");
-            const chartHeader = document.getElementById('chart-header');
-            const chartBody = document.getElementById('chart-body');
-            const scroller = scrollama();
-            let currentStep = 0;
-            
-            const headsSlider = document.getElementById('heads-slider');
-            const headsValueSpan = document.getElementById('heads-value');
-            headsSlider.addEventListener('input', (e) => { const heads = parseInt(e.target.value); const percentage = ((heads / config.capacity.headsPerMonth) * 100).toFixed(0); headsValueSpan.textContent = `${heads} (${percentage}%)`; config.financials.headsSold = heads; if (currentStep === 8) drawChart(8, false); });
-            document.getElementById('price-slider').addEventListener('input', (e) => { document.getElementById('price-value').textContent = parseFloat(e.target.value).toFixed(2); config.financials.avgPrice = parseFloat(e.target.value); if (currentStep === 8) drawChart(8, false); });
-            document.getElementById('energy-slider').addEventListener('input', (e) => { document.getElementById('energy-value').textContent = parseFloat(e.target.value).toFixed(1); config.financials.costs.lightHours = parseFloat(e.target.value); if (currentStep === 8) drawChart(8, false); });
 
-            const calculateFinancials = () => { const h=config.financials.headsSold,r=h*config.financials.avgPrice,e=(102 * 60 * config.financials.costs.lightHours / 1000) * 30 * config.financials.costs.electricityTariff,s=h*config.financials.costs.seedsMediaPerHead,n=h*config.financials.costs.nutrientsPerHead,p=h*config.financials.costs.packagingPerHead,a=config.financials.costs.laborPerMonth,c=config.financials.costs.otherPerMonth;return{revenue:r,elecCost:e,seedsMediaCost:s,nutrientsCost:n,packagingCost:p,labor:a,other:c,ebitda:r-e-s-n-p-a-c} };
-            const formatCurrency = (value) => `RM ${value.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        const infoDiv = document.getElementById('info');
+        console.log("--- Starting Usable Floor Area Diagnostic ---");
 
-            const animateBarChart = (chart) => { chart.querySelectorAll("rect").forEach(bar => { const h = bar.getAttribute('height'), y = bar.getAttribute('y'), sY = parseFloat(y) + parseFloat(h); anime({ targets: bar, height: [0, h], y: [sY, y], duration: 800, easing: 'easeOutExpo' }); }); };
-            const animateScatterPlot = (chart) => { anime({ targets: chart.querySelectorAll("circle"), scale: [0, 1], opacity: [0, 1], delay: anime.stagger(100), duration: 800, easing: 'easeOutElastic(1, .8)' }); };
-            const animateWaterfall = (chart) => { const t = anime.timeline({ easing: 'easeOutExpo', duration: 600 }); chart.querySelectorAll("rect").forEach((bar, i) => { const h = bar.getAttribute('height'), y = bar.getAttribute('y'), sY = parseFloat(y) + parseFloat(h); t.add({ targets: bar, height: [0, h], y: [sY, y] }, `-=${i > 0 ? 300 : 0}`); }); };
-            const animateDonut = (chart) => { chart.querySelectorAll("path").forEach(path => { const l = path.getTotalLength(); anime({ targets: path, strokeDasharray: [l, l], strokeDashoffset: [l, 0], duration: 1000, easing: 'easeOutQuart' }); }); };
-            
-            const initSweetHome3DView = () => { /* ... 3D View code is unchanged ... */ };
-            
-            const drawChart = (stepIndex, animate = true) => {
-                chartHeader.innerHTML = ''; chartBody.innerHTML = '';
-                try {
-                    const plotConfig = { style: { fontSize: "18px", fontFamily: "Lato, sans-serif", background: "transparent" }, width: 800, height: 600, marginLeft: 90, marginBottom: 100 };
-                    switch (stepIndex) {
-                        case 1: case 2: initSweetHome3DView(); break;
-                        case 3:
-                            chartHeader.innerHTML = `<h3>Production Model: High-Density Throughput</h3>`;
-                            chartBody.innerHTML = `<img src="https://i.imgur.com/vHq4L4D.png" alt="Floorplan of the venue" style="width:100%; height:100%; object-fit:contain; border-radius:8px;">`;
-                            break;
-                        case 4:
-                            chartHeader.innerHTML = `<h3>The Process: Continuous Harvest Cycle</h3>`;
-                            chartBody.innerHTML = `<div class="gantt-container"><div class="gantt-row"><div class="gantt-label"><strong>Weeks →</strong></div><div class="gantt-bar-container">${[1,2,3,4,5,6,7,8].map(w=>`<div style="text-align:center;font-weight:bold;">W${w}</div>`).join("")}</div></div><div class="gantt-row"><div class="gantt-label">Batch A</div><div class="gantt-bar-container"><div class="gantt-bar nursery" style="grid-column:1 / span 2"></div><div class="gantt-bar nft" style="grid-column:3 / span 4"></div><div class="gantt-bar harvest" style="grid-column:7 / span 1">✓</div></div></div><div class="gantt-row"><div class="gantt-label">Batch B</div><div class="gantt-bar-container"><div class="gantt-bar nursery" style="grid-column:2 / span 2"></div><div class="gantt-bar nft" style="grid-column:4 / span 4"></div><div class="gantt-bar harvest" style="grid-column:8 / span 1">✓</div></div></div><div class="gantt-row"><div class="gantt-label">Batch C</div><div class="gantt-bar-container"><div class="gantt-bar nursery" style="grid-column:3 / span 2"></div><div class="gantt-bar nft" style="grid-column:5 / span 4"></div></div></div><div class="gantt-legend"><div class="legend-item"><div class="legend-color nursery"></div><span>Nursery Phase</span></div><div class="legend-item"><div class="legend-color nft"></div><span>NFT Growth Phase</span></div><div class="legend-item"><div class="legend-color harvest"></div><span>Harvest Week</span></div></div></div>`;
-                            break;
-                        case 5:
-                             chartHeader.innerHTML = `<h3>Operational Excellence: Standard Operating Procedure</h3>`;
-                             chartBody.innerHTML = `<div class="flowchart-grid">
-                                <div class="flow-step" style="grid-column: 1; grid-row: 1;"><h4>1. Sanitize & Seed</h4><p>Trays are sanitized & seeded.</p></div>
-                                <div class="flow-arrow" style="grid-column: 1; grid-row: 2;">↓</div>
-                                <div class="flow-step" style="grid-column: 1; grid-row: 3;"><h4>2. Nursery (2 Wks)</h4><p>Seedlings develop under low light.</p></div>
-                                <div class="flow-arrow" style="grid-column: 2; grid-row: 3;">→</div>
-                                <div class="flow-step" style="grid-column: 3; grid-row: 3;"><h4>3. Transplant</h4><p>Move to main NFT systems.</p></div>
-                                <div class="flow-arrow" style="grid-column: 3; grid-row: 4;">↓</div>
-                                <div class="flow-step" style="grid-column: 3; grid-row: 5;"><h4>4. Growth (4 Wks)</h4><p>Mature with daily nutrient checks.</p></div>
-                                <div class="flow-arrow" style="grid-column: 2; grid-row: 5;">←</div>
-                                <div class="flow-step" style="grid-column: 1; grid-row: 5;"><h4>5. Harvest & Pack</h4><p>Harvested, chilled, and packed.</p></div>
-                             </div>`;
-                            break;
-                        case 6:
-                            const revenueData = [{ segment: "B2B (Cafes/Grocers)", value: (config.financials.headsSold * 0.6) * 5.50 }, { segment: "D2C (Subscriptions)", value: (config.financials.headsSold * 0.4) * 7.50 }];
-                            chartHeader.innerHTML = `<h3>Projected Monthly Revenue</h3><p>Based on ${config.financials.headsSold} heads sold per month.</p>`;
-                            const revenueChart = Plot.plot({ ...plotConfig, y: { label: "Revenue (MYR)", grid: true, strokeDasharray:"2,2", ticks: 5, tickFormat: "s", tickFontSize: 14, labelFontSize: 16, fontWeight: 700, labelOffset: 60 }, x: { tickFontSize: 16 }, color: { scheme: "greens" }, marks: [Plot.barY(revenueData, { x: "segment", y: "value", fill: "segment" }), Plot.ruleY([0]), Plot.tip(revenueData, Plot.pointerX({ x: "segment", title: d => `${d.segment}\n${formatCurrency(d.value)}` }))] });
-                            chartBody.append(revenueChart);
-                            if(animate) animateBarChart(revenueChart);
-                            break;
-                        case 7:
-                            const { elecCost, seedsMediaCost, nutrientsCost, packagingCost, labor } = calculateFinancials();
-                            const costData = [{ category: "Electricity", value: elecCost }, { category: "Seeds & Media", value: seedsMediaCost }, { category: "Nutrients", value: nutrientsCost }, { category: "Packaging", value: packagingCost }, { category: "Labor", value: labor }];
-                            chartHeader.innerHTML = `<h3>Granular Monthly Operational Cost Breakdown</h3>`;
-                            const costChart = Plot.plot({ ...plotConfig, y: { label: "Cost (MYR)", grid: true, strokeDasharray:"2,2", ticks: 5, tickFormat: "s", tickFontSize: 14, labelFontSize: 16, fontWeight: 700, labelOffset: 60 }, x:{ label:null, tickRotate: -30, tickFontSize: 16 }, color: { scheme: "oranges" }, marks: [Plot.barY(costData, { x: "category", y: "value", fill: "category" }), Plot.ruleY([0]), Plot.tip(costData, Plot.pointerX({ x: "category", title: d => `${d.category}\n${formatCurrency(d.value)}` }))] });
-                            chartBody.append(costChart);
-                            if(animate) animateBarChart(costChart);
-                            break;
-                        case 8:
-                            const data = calculateFinancials();
-                            const bridgeData = [{ stage: "Revenue", value: data.revenue, base: 0, cumulative: data.revenue, type: 'positive' }, { stage: "Costs", value: -(data.elecCost + data.seedsMediaCost + data.nutrientsCost + data.packagingCost + data.labor + data.other), base: data.revenue, cumulative: data.ebitda, type: 'negative' }];
-                            const ebitdaResult = { stage: "EBITDA", value: data.ebitda, type: 'total' };
-                            const communityShare = { stage: "Community Reinvestment (40%)", value: -(data.ebitda > 0 ? data.ebitda * 0.4 : 0), base: data.ebitda, cumulative: data.ebitda * 0.6, type: 'share' };
-                            const ventureNet = { stage: "Net Profit to Venture (60%)", value: data.ebitda * 0.6, type: 'net' };
-                            const connectorData = [{ x1: "Revenue", y1: bridgeData[0].cumulative, x2: "Costs", y2: bridgeData[1].base }, { x1: "Costs", y1: bridgeData[1].cumulative, x2: "EBITDA", y2: ebitdaResult.value > 0 ? ebitdaResult.value : 0 }, { x1: "EBITDA", y1: ebitdaResult.value, x2: "Community Reinvestment (40%)", y2: communityShare.base }];
-                            chartHeader.innerHTML = `<h3>Interactive Profit Distribution Waterfall</h3><p>Monthly Projections at Steady State</p>`;
-                            const waterfallChart = Plot.plot({ ...plotConfig, x: { domain: ["Revenue", "Costs", "EBITDA", "Community Reinvestment (40%)", "Net Profit to Venture (60%)"], label: null, tickRotate: -30, tickFontSize: 14 }, y: { grid: true, strokeDasharray:"2,2", ticks: 5, label: "Amount (MYR)", labelFontSize: 16, fontWeight: 700, labelOffset: 60, tickFontSize: 14, tickFormat: "s" }, color: { domain: ['positive', 'negative', 'total', 'share', 'net'], range: ['#007A4D', 'orange', 'steelblue', '#6c757d', '#005a38'] }, marks: [ Plot.barY(bridgeData, { x: "stage", y1: "base", y2: "cumulative", fill: "type" }), Plot.barY([ebitdaResult], { x: "stage", y: "value", fill: "type" }), Plot.barY([communityShare], { x: "stage", y1: "base", y2: "cumulative", fill: "type" }), Plot.barY([ventureNet], { x: "stage", y: "value", fill: "type" }), Plot.ruleY([0]), Plot.link(connectorData, { x1: "x1", y1: "y1", x2: "x2", y2: "y2", stroke: "grey", strokeDasharray: "2,2" }), Plot.tip([ ...bridgeData, ebitdaResult, communityShare, ventureNet ], Plot.pointerX({ x: "stage", title: d => `${d.stage}\n${formatCurrency(d.value)}` })) ] });
-                            chartBody.append(waterfallChart);
-                            if(animate) animateWaterfall(waterfallChart);
-                            break;
-                        case 9:
-                            const capexChartData = [{category: "LEDs", value: 16830}, {category: "Racks", value: 16150}, {category: "Other", value: 8860}];
-                            const opexChartData = [{category: "Electricity", value: 16932}, {category: "Labor", value: 10800}, {category: "Consumables", value: 9200}, {category: "Packaging/Other", value: 2850}];
-                            const capexTotal = capexChartData.reduce((a,b)=> a+b.value, 0);
-                            const opexTotal = opexChartData.reduce((a,b)=> a+b.value, 0);
-                            chartHeader.innerHTML = `<h3>Investment Breakdown by Category</h3>`;
-                            chartBody.innerHTML = `<div style="display:flex; width:100%; height:100%; gap:20px; align-items:center; justify-content:center;"><div id="capex-donut"></div><div id="opex-donut"></div></div>`;
-                            const capexDonut = Plot.plot({ ...plotConfig, width: 400, height: 400, color: { legend: true, columns: 3 }, legend: { x: "center", y: "bottom", orientation: "horizontal"}, marks: [ Plot.barY(capexChartData, Plot.stackY({ x: () => 1, y: "value", fill: "category", tip: true, title: d => `${d.category}\n${formatCurrency(d.value)}` })), Plot.text(capexChartData, Plot.stackY({ x: () => 1, y: "value", text: d => `${(d.value/capexTotal*100).toFixed(0)}%`, fill:"white", fontWeight:700})), Plot.text([1], { text: () => `CapEx\n${formatCurrency(capexTotal)}`, frameAnchor: "middle", fontSize: 24, fontWeight: 700}) ], x: { axis: null }, y: { axis: null }, coord: { type: "polar", innerRadius: 0.6 } });
-                            const opexDonut = Plot.plot({ ...plotConfig, width: 400, height: 400, color: { legend: true, columns: 2 }, legend: { x: "center", y: "bottom", orientation: "horizontal"}, marks: [ Plot.barY(opexChartData, Plot.stackY({ x: () => 1, y: "value", fill: "category", tip: true, title: d => `${d.category}\n${formatCurrency(d.value)}` })), Plot.text(opexChartData, Plot.stackY({ x: () => 1, y: "value", text: d => `${(d.value/opexTotal*100).toFixed(0)}%`, fill:"white", fontWeight:700})), Plot.text([1], { text: () => `6-Mo OpEx\n${formatCurrency(opexTotal)}`, frameAnchor: "middle", fontSize: 24, fontWeight: 700}) ], x: { axis: null }, y: { axis: null }, coord: { type: "polar", innerRadius: 0.6 } });
-                            document.getElementById('capex-donut').append(capexDonut);
-                            document.getElementById('opex-donut').append(opexDonut);
-                            if(animate) { animateDonut(capexDonut); animateDonut(opexDonut); }
-                            break;
-                        case 10:
-                            const riskData = [ { risk: "Heat/Humidity Spike", likelihood: 4, impact: 4, mitigation: "Mitigation: High-capacity exhaust fans venting via balcony and constant internal airflow." }, { risk: "Power Outage", likelihood: 3, impact: 4, mitigation: "Mitigation: Dedicated UPS system for all critical water and air pumps." }, { risk: "Price Compression", likelihood: 3, impact: 3, mitigation: "Mitigation: Secure 6-month MOUs for 60% of volume; build premium D2C brand." }, { risk: "Pest Infestation", likelihood: 2, impact: 5, mitigation: "Mitigation: Biosecurity protocols including screened intakes and strict sanitation SOPs." }, { risk: "QA Drift (pH/EC)", likelihood: 3, impact: 2, mitigation: "Mitigation: Redundant, calibrated meters and daily parameter logging." }];
-                            chartHeader.innerHTML = `<h3>Risk & Mitigation Matrix</h3><p>Hover over points for mitigation details</p>`;
-                            const riskChart = Plot.plot({ ...plotConfig, x: { domain: [1, 5.5], label: "Likelihood →", ticks: 5, tickFontSize: 14, labelFontSize: 16, fontWeight: 700 }, y: { domain: [1, 5.5], label: "Impact →", ticks: 5, tickFontSize: 14, labelFontSize: 16, fontWeight: 700 }, color: { scheme: "reds", legend: true }, marks: [Plot.dot(riskData, { x: "likelihood", y: "impact", r: 25, fill: "impact", title: "mitigation" }), Plot.text(riskData, { x: "likelihood", y: "impact", text: "risk", dy: -40, fontWeight: "bold", fontSize: 16 })] });
-                            chartBody.append(riskChart);
-                            if(animate) animateScatterPlot(riskChart);
-                            break;
-                        case 11:
-                            chartHeader.innerHTML = `<h3>A Partnership for Growth</h3>`;
-                            chartBody.innerHTML = `<div style="text-align:center; padding-top: 5vh; font-size: 1.5rem; color: var(--accent-dark);"><h2 style="font-size:2.5rem;">Ready to Cultivate a Sustainable Future</h2></div>`;
-                            break;
+        try {
+            const loader = new OBJLoader();
+            const objFileName = 'FloorPlan_Hydro.obj';
+
+            loader.load(
+                objFileName,
+                function (object) {
+                    let totalUsableArea = 0;
+                    const floorDetails = [];
+
+                    // Iterate through all parts of the loaded model
+                    object.traverse(function (child) {
+                        // We are looking for Meshes that are named 'Floor_...' which is standard for Sweet Home 3D floors
+                        if (child instanceof THREE.Mesh && child.name.startsWith('Floor_')) {
+                            
+                            // Calculate the size (dimensions) of this floor piece
+                            const box = new THREE.Box3().setFromObject(child);
+                            const size = box.getSize(new THREE.Vector3());
+
+                            // The area of a horizontal floor is its width (x) times its depth (z)
+                            // We divide by 10000 to convert from cm^2 (SH3D's default) to m^2
+                            const area = (size.x * size.z) / 10000;
+                            totalUsableArea += area;
+
+                            floorDetails.push({
+                                name: child.name,
+                                width_m: (size.x / 100).toFixed(2),
+                                depth_m: (size.z / 100).toFixed(2),
+                                area_m2: area.toFixed(2)
+                            });
+                        }
+                    });
+
+                    // --- THIS IS THE CRUCIAL PART ---
+                    console.log("--- DIAGNOSTIC RESULTS ---");
+                    console.log("Model Loaded Successfully.");
+                    console.table(floorDetails); // A clean table of each floor piece found
+                    console.log(`TOTAL USABLE FLOOR AREA: ${totalUsableArea.toFixed(2)} square meters.`);
+                    console.log("--------------------------");
+
+                    infoDiv.innerHTML = `<strong style="color: green;">Diagnostic Complete!</strong><br>Please copy the full output from the F12 developer console and send it back to me.`;
+                },
+                function (xhr) {
+                    if (xhr.lengthComputable) {
+                        infoDiv.textContent = `Loading: ${(xhr.loaded / xhr.total * 100).toFixed(2)}%`;
                     }
-                } catch (e) {
-                    chartHeader.innerHTML = `<h3>Error Rendering Visualization for Step ${stepIndex}</h3>`;
-                    chartBody.innerHTML = `<div style="color:red; text-align:center; padding: 2rem;"><p>There was an issue displaying this component.</p><p style="font-family: monospace; font-size: 0.8em;">${e.message}</p></div>`;
+                },
+                function (error) {
+                    console.error('An error happened during OBJ loading:', error);
+                    infoDiv.innerHTML = `<span style="color: red;"><strong>Error:</strong> Could not load the OBJ file. Check the browser console (F12) for a 404 error.</span>`;
                 }
-            };
-
-            const handleStepEnter = (response) => {
-                currentStep = response.index + 1;
-                steps.forEach((s, i) => { s.style.opacity = i === response.index ? 1 : 0.6; });
-                drawChart(currentStep);
-            };
-            scroller.setup({ step: "#scrolly-text article .step", offset: 0.5 }).onStepEnter(handleStepEnter);
-        });
+            );
+        } catch(e) {
+            console.error("A critical error occurred:", e);
+            infoDiv.innerHTML = `<span style="color: red;"><strong>Critical Error:</strong> ${e.message}</span>`;
+        }
     </script>
 </body>
 </html>
