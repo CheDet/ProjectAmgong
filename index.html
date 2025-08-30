@@ -54,7 +54,7 @@
         <section id="scrolly-text">
             <article>
                 <div class="step" data-step="1"><h2>The Strategic Imperative</h2><p>Malaysia's food security is a national priority. Our analysis identifies a clear opportunity to displace volatile foreign imports with consistent, high-quality local produce. The urban consumer demand for fresh, pesticide-free food is no longer a niche—it is a mainstream market requirement.</p></div>
-                <div class="step" data-step="2"><h2>The Asset: A Zero-Cost Venue</h2><p>Our foundational asset is a 120m² rent-free shophouse. This eliminates a significant operational expense, fundamentally altering the venture's risk profile and accelerating the path to profitability. The 3D model shows the exact layout and scale of the space.</p><div class="justification"><p><strong>Interact with the model:</strong><br>• <strong>Left-Click & Drag:</strong> Rotate<br>• <strong>Right-Click & Drag:</strong> Pan<br>• <strong>Scroll:</strong> Zoom</p></div></div>
+                <div class="step" data-step="2"><h2>The Asset: A Zero-Cost Venue</h2><p>Our foundational asset is a 120m² rent-free shophouse. This eliminates a significant operational expense, fundamentally altering the venture's risk profile and accelerating the path to profitability. The 3D model shows the exact layout and scale of the space.</p><div class="justification"><p><strong>Interact with the model:</strong><br>• <strong>Left-Click & Drag:</strong> Rotate Horizontally<br>• <strong>Right-Click & Drag:</strong> Pan (Move)<br>• <strong>Scroll:</strong> Zoom</p></div></div>
                 <div class="step" data-step="3"><h2>Production Model: High-Density Throughput</h2><p>We will deploy a 3-tier Nutrient Film Technique (NFT) system, a globally proven method for leafy green cultivation. This technology enables a projected steady-state output of <strong>2,550 heads of premium lettuce per month</strong>.</p></div>
                 <div class="step" data-step="4"><h2>The Process: Continuous Harvest Cycle</h2><p>Our farm operates like a conveyor belt. A new batch is seeded every week. After an initial 6-week ramp-up, this system allows us to <strong>harvest a full batch of ~640 heads every single week</strong>, guaranteeing a fresh and predictable supply.</p></div>
                 <div class="step" data-step="5"><h2>Go-to-Market: A De-Risked Revenue Strategy</h2><p>Our revenue model is built on resilience, targeting two distinct customer segments. This approach balances the stability of wholesale with the higher margins of direct retail sales.</p><div class="justification"><p><strong>B2B (Business-to-Business):</strong> This segment ensures consistent cash flow and operational stability. We will secure volume off-take agreements with local businesses.</p><ul><li><strong>Example Cafes in Melaka:</strong> The Daily Fix Cafe, Calanthe Art Cafe, Heesan Kopi.</li><li><strong>Example Grocers/Hotels:</strong> Jaya Grocer at AEON Melaka, The Majestic Malacca, Heeren Mansion.</li></ul><p><strong>D2C (Direct-to-Consumer):</strong> A premium subscription service captures maximum value per head and builds a loyal community brand around freshness and traceability.</p></div></div>
@@ -118,9 +118,6 @@
                     const scene = new THREE.Scene();
                     scene.background = new THREE.Color(0xf8f9fa);
                     
-                    // --- DEFINITIVE CAMERA FIX ---
-                    // The near plane is set very low to prevent clipping when zooming.
-                    // The far plane will be set automatically after the model loads.
                     const camera = new THREE.PerspectiveCamera(50, chartBody.clientWidth / chartBody.clientHeight, 1, 5000);
                     
                     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -129,6 +126,11 @@
                     
                     const controls = new OrbitControls(camera, renderer.domElement);
                     controls.enableDamping = true;
+                    
+                    // --- ENHANCED CONTROLS: Panning & Angle Lock ---
+                    controls.enablePan = true; // Explicitly enable panning
+                    controls.maxPolarAngle = Math.PI / 2; // Prevent camera from going under the model
+                    controls.minPolarAngle = 0; // Prevent camera from going over the top
                     
                     scene.add(new THREE.AmbientLight(0xffffff, 1.5));
                     const dirLight = new THREE.DirectionalLight(0xffffff, 2.0);
@@ -141,23 +143,18 @@
                             const box = new THREE.Box3().setFromObject(object);
                             const size = box.getSize(new THREE.Vector3());
                             const center = box.getCenter(new THREE.Vector3());
-                            
-                            object.position.sub(center); // Center the model
-                            
+                            object.position.sub(center);
                             const maxDim = Math.max(size.x, size.y, size.z);
                             const fov = camera.fov * (Math.PI / 180);
-                            const cameraDistance = Math.abs(maxDim / 2 / Math.tan(fov / 2));
-
+                            const cameraDistance = Math.abs(maxDim / Math.tan(fov / 2));
                             camera.position.copy(center);
                             camera.position.x += cameraDistance;
                             camera.position.y += cameraDistance * 0.5;
                             camera.position.z += cameraDistance;
-                            
-                            controls.target.copy(center);
-                            camera.far = maxDim * 5; // Set far plane based on model size
+                            camera.far = maxDim * 5;
                             camera.updateProjectionMatrix();
+                            controls.target.copy(center);
                             controls.update();
-                            
                             scene.add(object);
                         });
                     }, undefined, (error) => {
@@ -169,14 +166,14 @@
                              object.position.sub(center);
                              const maxDim = Math.max(size.x, size.y, size.z);
                              const fov = camera.fov * (Math.PI / 180);
-                             const cameraDistance = Math.abs(maxDim / 2 / Math.tan(fov / 2));
+                             const cameraDistance = Math.abs(maxDim / Math.tan(fov / 2));
                              camera.position.copy(center);
                              camera.position.x += cameraDistance;
                              camera.position.y += cameraDistance * 0.5;
                              camera.position.z += cameraDistance;
-                             controls.target.copy(center);
                              camera.far = maxDim * 5;
                              camera.updateProjectionMatrix();
+                             controls.target.copy(center);
                              controls.update();
                              scene.add(object);
                         }, undefined, (err) => { throw new Error(`Could not load the OBJ file: ${objFileName}.`); });
