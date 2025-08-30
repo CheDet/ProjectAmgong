@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OBJ Model Testing</title>
+    <title>OBJ + MTL Model Test</title>
     <style>
         body { margin: 0; }
         canvas { display: block; }
@@ -15,6 +15,8 @@
             color: black;
             font-family: sans-serif;
             font-size: 1.2em;
+            padding: 0 10px;
+            box-sizing: border-box;
         }
     </style>
 </head>
@@ -34,6 +36,7 @@
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+        import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 
         const infoDiv = document.getElementById('info');
         
@@ -57,29 +60,44 @@
             directionalLight.position.set(10, 20, 5);
             scene.add(directionalLight);
 
-            const loader = new OBJLoader();
+            const mtlLoader = new MTLLoader();
+            const objLoader = new OBJLoader();
+
+            const mtlFileName = 'FloorPlan_Hydro.mtl';
             const objFileName = 'FloorPlan_Hydro.obj';
 
-            loader.load(
-                // File URL
-                objFileName,
-                // onLoad callback
-                function (object) {
-                    infoDiv.textContent = 'Model Loaded Successfully! You can now interact.';
-                    const box = new THREE.Box3().setFromObject(object);
-                    const center = box.getCenter(new THREE.Vector3());
-                    object.position.sub(center); // Center the model
-                    scene.add(object);
+            mtlLoader.load(
+                mtlFileName,
+                function(materials) {
+                    materials.preload();
+                    objLoader.setMaterials(materials);
+
+                    objLoader.load(
+                        objFileName,
+                        function (object) {
+                            infoDiv.textContent = 'Model Loaded Successfully! You can now interact.';
+                            const box = new THREE.Box3().setFromObject(object);
+                            const center = box.getCenter(new THREE.Vector3());
+                            object.position.sub(center);
+                            scene.add(object);
+                        },
+                        function (xhr) {
+                            const percentLoaded = (xhr.loaded / xhr.total * 100);
+                            infoDiv.textContent = `Loading OBJ: ${percentLoaded.toFixed(2)}%`;
+                        },
+                        function (error) {
+                            console.error('An error happened during OBJ loading:', error);
+                            infoDiv.innerHTML = `<span style="color: red;"><strong>Error:</strong> Could not load the OBJ file. Check the browser console (F12) for a 404 error. Ensure 'FloorPlan_Hydro.obj' is in the root of your GitHub repository and the name is exact.</span>`;
+                        }
+                    );
                 },
-                // onProgress callback
                 function (xhr) {
                     const percentLoaded = (xhr.loaded / xhr.total * 100);
-                    infoDiv.textContent = `Loading: ${percentLoaded.toFixed(2)}%`;
+                    infoDiv.textContent = `Loading MTL: ${percentLoaded.toFixed(2)}%`;
                 },
-                // onError callback
                 function (error) {
-                    console.error('An error happened during OBJ loading:', error);
-                    infoDiv.innerHTML = `<span style="color: red;"><strong>Error:</strong> Could not load the OBJ file. Check the browser console (F12) for a 404 error. Ensure 'FloorPlan_Hydro.obj' is in the root of your GitHub repository and the name is exact.</span>`;
+                    console.error('An error happened during MTL loading:', error);
+                    infoDiv.innerHTML = `<span style="color: red;"><strong>Error:</strong> Could not load the MTL file. Check the browser console (F12) for a 404 error. Ensure 'FloorPlan_Hydro.mtl' is in the root of your GitHub repository and the name is exact.</span>`;
                 }
             );
 
