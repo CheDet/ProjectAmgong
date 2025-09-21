@@ -56,7 +56,6 @@
         .flow-step { background-color: #fff; border: 2px solid var(--border-color); border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .flow-step h4 { margin: 0 0 5px 0; color: var(--accent-dark); }
         .flow-arrow { font-size: 2.5rem; color: var(--accent-color); font-weight: bold; text-align: center; }
-
         @media (max-width: 900px) { #scrolly-container { flex-direction: column; } #scrolly-graphics, #scrolly-text { width: 100%; } figure { position: relative; height: 60vh; } .chart-container { height: calc(100% - 40px); width: calc(100% - 40px); } article { padding: 20px; } .step { margin-bottom: 40px; } }
     </style>
 </head>
@@ -69,19 +68,19 @@
         <section id="scrolly-text">
             <article>
                 <div class="step" data-step="1"><h2>The Strategic Imperative</h2><p>Malaysia's food security is a national priority. Our analysis identifies a clear opportunity to displace volatile foreign imports with consistent, high-quality local produce. The urban consumer demand for fresh, pesticide-free food is no longer a niche—it is a mainstream market requirement.</p></div>
-                <div class="step" data-step="2"><h2>The Asset: A Zero-Cost Venue</h2><p>Our foundational asset is a 120m² rent-free shophouse. This eliminates a significant operational expense, fundamentally altering the venture's risk profile and accelerating the path to profitability. The 3D model shows the exact layout and scale of the space.</p><div class="justification"><p><strong>Interact with the model:</strong><br>• <strong>Left-Click & Drag:</strong> Rotate Horizontally<br>• <strong>Right-Click & Drag:</strong> Pan (Move)<br>• <strong>Scroll:</strong> Zoom</p></div></div>
-                <div class="step" data-step="3"><h2>Production Model: Data-Driven Capacity</h2><p>Based on a precise analysis of the 3D model's floor object, we have identified **73.65 m² of usable, unobstructed floor space**. This allows for a revised, higher-density layout.</p><div class="justification"><p>• **Total Usable Area:** 73.65 m²<br>• **Footprint per Rack (inc. walkways):** ~4.0 m²<br>• **Revised Capacity:** **18 Hydroponic Racks**</p><p>This data-driven approach increases our capacity from the initial estimate of 17 racks, strengthening our entire business case.</p></div></div>
-                <div class="step" data-step="4"><h2>High-Density Throughput</h2><p>The revised 18-rack system enables a new, higher projected output. At full capacity, the facility can produce **2,700 heads of premium lettuce per month**.</p></div>
+                <div class="step" data-step="2"><h2>The Asset: A Zero-Cost Venue</h2><p>Our foundational asset is a 120m² rent-free shophouse with a ceiling height of <strong>2.68 meters</strong>. This eliminates a significant operational expense, fundamentally altering the venture's risk profile and accelerating the path to profitability. The 3D model shows the exact layout and scale of the space.</p><div class="justification"><p><strong>Interact with the model:</strong><br>• <strong>Left-Click & Drag:</strong> Rotate Horizontally<br>• <strong>Right-Click & Drag:</strong> Pan (Move)<br>• <strong>Scroll:</strong> Zoom</p></div></div>
+                <div class="step" data-step="3"><h2>Production Model: Data-Driven Capacity</h2><p>Based on a precise, triangle-by-triangle area calculation of the 3D model's `ground_1` object, we have identified **73.65 m² of usable, unobstructed floor space**. This allows for a robust and efficient layout.</p><div class="justification"><p>• <strong>Total Usable Area:</strong> 73.65 m²<br>• <strong>Footprint per Rack (inc. walkways):</strong> ~4.0 m²<br>• <strong>Definitive Capacity:** **18 Hydroponic Racks**</p><p>This data-driven approach strengthens our entire business case, confirming a higher capacity than initial estimates.</p></div></div>
+                <div class="step" data-step="4"><h2>High-Density Throughput</h2><p>The definitive 18-rack system enables a new, higher projected output. At full capacity, the facility can produce **2,700 heads of premium lettuce per month**.</p></div>
                 <div class="step" data-step="5"><h2>The Process: Continuous Harvest Cycle</h2><p>Our farm operates like an assembly line. As the Gantt chart illustrates, by seeding a new batch weekly, we can achieve a continuous harvest of **~675 heads every single week** after an initial ramp-up period.</p></div>
                 <div class="step" data-step="6"><h2>Operational Excellence: Standard Operating Procedure (SOP)</h2><p>To ensure consistency and quality at this higher capacity, all operations are governed by a strict SOP, providing workers with a clear, repeatable process for every stage of cultivation.</p></div>
                 <div class="step" data-step="7"><h2>Go-to-Market: A De-Risked Revenue Strategy</h2><p>Our revenue model is built on resilience, targeting two distinct customer segments. This approach balances the stability of wholesale with the higher margins of direct retail sales.</p><div class="justification"><p><strong>B2B (Business-to-Business):</strong> Securing volume off-take with local cafes, grocers, and hotels provides predictable cash flow.</p><p><strong>D2C (Direct-to-Consumer):</strong> A premium subscription service captures maximum value per head and builds a loyal community brand.</p></div></div>
                 <div class="step" data-step="8"><h2>Unit Economics: Granular Cost Control</h2><p>Operational excellence is paramount. This granular breakdown shows that electricity is the primary variable cost, followed by specific, per-head consumables. This allows for targeted efficiency improvements.</p></div>
-                <div class="step" data-step="9"><h2>Financial Viability & Profit Sharing</h2><p>This interactive waterfall chart models our path to profitability with the updated 18-rack capacity, incorporating the Sejati Madani 60/40 profit-sharing scheme. <strong>Stress-test our model against severe market pressures using the sliders.</strong></p><div class="interactive-controls"><div class="slider-group"><label>Heads Sold per Month: <span id="heads-value">2430 (90%)</span></label><input type="range" id="heads-slider" min="1350" max="2700" step="5" value="2430"></div><div class="slider-group"><label>Avg. Price/Head (RM): <span id="price-value">6.50</span></label><input type="range" id="price-slider" min="3.5" max="8.0" step="0.1" value="6.5"></div><div class="slider-group"><label>Light Hours/Day: <span id="energy-value">14</span></label><input type="range" id="energy-slider" min="12" max="18" step="0.5" value="14"></div></div></div>
+                <div class="step" data-step="9"><h2>Financial Viability & Profit Sharing</h2><p>This interactive waterfall chart models our path to profitability with the updated 18-rack capacity, incorporating the Sejati Madani 60/40 profit-sharing scheme. <strong>Stress-test our model against severe market pressures using the sliders.</strong></p><div class="interactive-controls"><div class="slider-group"><label>Heads Sold per Month: <span id="heads-value">2430 (90%)</span></label><input type="range" id="heads-slider" min="1350" max="2700" step="10" value="2430"></div><div class="slider-group"><label>Avg. Price/Head (RM): <span id="price-value">6.50</span></label><input type="range" id="price-slider" min="3.5" max="8.0" step="0.1" value="6.5"></div><div class="slider-group"><label>Light Hours/Day: <span id="energy-value">14</span></label><input type="range" id="energy-slider" min="12" max="18" step="0.5" value="14"></div></div></div>
                 <div class="step" data-step="10">
-                    <h2>The Investment: Detailed Breakdown</h2><p>The required grant amount remains consistent, as the primary cost drivers (racks, lights) scale linearly. This demonstrates the capital efficiency of our expansion.</p>
+                    <h2>The Investment: Detailed Breakdown</h2><p>The required grant amount is updated to reflect the 18-rack system. This demonstrates the capital efficiency of our expansion, as the core infrastructure supports the increased capacity with only marginal increases in rack and lighting costs.</p>
                 </div>
                 <div class="step" data-step="11"><h2>Risk Mitigation: Proactive & Comprehensive</h2><p>We have identified and planned for key operational risks. <strong>Hover over each point</strong> to see the specific, pre-planned mitigation strategy we will deploy, ensuring operational resilience from day one.</p></div>
-                <div class="step" data-step="12"><h2>The Ask & Partnership</h2><p>An investment of <strong>~RM 90,000</strong> will catalyze a financially sustainable venture that strengthens food security, creates jobs, and empowers the local community. We invite you to partner with us.</p></div>
+                <div class="step" data-step="12"><h2>The Ask & Partnership</h2><p>An investment of <strong>~RM 94,000</strong> will catalyze a financially sustainable venture that strengthens food security, creates jobs, and empowers the local community. We invite you to partner with us.</p></div>
             </article>
         </section>
     </main>
@@ -122,7 +121,84 @@
             const animateWaterfall = (chart) => { const t = anime.timeline({ easing: 'easeOutExpo', duration: 600 }); chart.querySelectorAll("rect").forEach((bar, i) => { const h = bar.getAttribute('height'), y = bar.getAttribute('y'), sY = parseFloat(y) + parseFloat(h); t.add({ targets: bar, height: [0, h], y: [sY, y] }, `-=${i > 0 ? 300 : 0}`); }); };
             const animateDonut = (chart) => { chart.querySelectorAll("path").forEach(path => { const l = path.getTotalLength(); anime({ targets: path, strokeDasharray: [l, l], strokeDashoffset: [l, 0], duration: 1000, easing: 'easeOutQuart' }); }); };
             
-            const initSweetHome3DView = () => { /* ... 3D View code is unchanged ... */ };
+            // --- RESTORED 3D VIEW FUNCTION ---
+            const initSweetHome3DView = () => {
+                try {
+                    chartHeader.innerHTML = `<h3>Venue Overview: Interactive 3D Model</h3><p>A high-fidelity model from Sweet Home 3D.</p>`;
+                    chartBody.innerHTML = '';
+                    
+                    const objFileName = 'FloorPlan_Hydro.obj';
+                    const mtlFileName = 'FloorPlan_Hydro.mtl';
+
+                    const scene = new THREE.Scene();
+                    scene.background = new THREE.Color(0xf8f9fa);
+                    
+                    const camera = new THREE.PerspectiveCamera(50, chartBody.clientWidth / chartBody.clientHeight, 1, 5000);
+                    
+                    const renderer = new THREE.WebGLRenderer({ antialias: true });
+                    renderer.setSize(chartBody.clientWidth, chartBody.clientHeight);
+                    chartBody.appendChild(renderer.domElement);
+                    
+                    const controls = new OrbitControls(camera, renderer.domElement);
+                    controls.enableDamping = true;
+                    controls.maxPolarAngle = Math.PI / 2;
+                    controls.minPolarAngle = 0;
+                    
+                    scene.add(new THREE.AmbientLight(0xffffff, 1.5));
+                    const dirLight = new THREE.DirectionalLight(0xffffff, 2.0);
+                    dirLight.position.set(0.5, 1, 0.5).normalize();
+                    scene.add(dirLight);
+                    
+                    new MTLLoader().load(mtlFileName, (materials) => {
+                        materials.preload();
+                        new OBJLoader().setMaterials(materials).load(objFileName, (object) => {
+                            const box = new THREE.Box3().setFromObject(object);
+                            const size = box.getSize(new THREE.Vector3());
+                            const center = box.getCenter(new THREE.Vector3());
+                            object.position.sub(center);
+                            const maxDim = Math.max(size.x, size.y, size.z);
+                            const fov = camera.fov * (Math.PI / 180);
+                            const cameraDistance = Math.abs(maxDim / Math.tan(fov / 2));
+                            camera.position.copy(center);
+                            camera.position.x += cameraDistance;
+                            camera.position.y += cameraDistance * 0.5;
+                            camera.position.z += cameraDistance;
+                            camera.far = maxDim * 5;
+                            camera.updateProjectionMatrix();
+                            controls.target.copy(center);
+                            controls.update();
+                            scene.add(object);
+                        });
+                    }, undefined, (error) => {
+                        console.warn("Could not load MTL, attempting to load OBJ with basic material.");
+                        new OBJLoader().load(objFileName, (object) => {
+                             const box = new THREE.Box3().setFromObject(object);
+                             const size = box.getSize(new THREE.Vector3());
+                             const center = box.getCenter(new THREE.Vector3());
+                             object.position.sub(center);
+                             const maxDim = Math.max(size.x, size.y, size.z);
+                             const fov = camera.fov * (Math.PI / 180);
+                             const cameraDistance = Math.abs(maxDim / Math.tan(fov / 2));
+                             camera.position.copy(center);
+                             camera.position.x += cameraDistance;
+                             camera.position.y += cameraDistance * 0.5;
+                             camera.position.z += cameraDistance;
+                             camera.far = maxDim * 5;
+                             camera.updateProjectionMatrix();
+                             controls.target.copy(center);
+                             controls.update();
+                             scene.add(object);
+                        }, undefined, (err) => { throw new Error(`Could not load the OBJ file: ${objFileName}.`); });
+                    });
+                    
+                    function animate() { requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); }
+                    animate();
+                    window.addEventListener('resize', () => { camera.aspect = chartBody.clientWidth / chartBody.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(chartBody.clientWidth, chartBody.clientHeight); }, false);
+                } catch (e) {
+                    chartHeader.innerHTML = `<h3>Error Rendering 3D View</h3>`;
+                    chartBody.innerHTML = `<div style="color:red; text-align:center; padding: 2rem;"><p>${e.message}</p></div>`;
+                }
+            };
             
             const drawChart = (stepIndex, animate = true) => {
                 chartHeader.innerHTML = ''; chartBody.innerHTML = '';
@@ -132,27 +208,20 @@
                         case 1: case 2: initSweetHome3DView(); break;
                         case 3:
                             chartHeader.innerHTML = `<h3>Production Model: Data-Driven Capacity</h3>`;
-                            chartBody.innerHTML = `<img src="https://i.imgur.com/vHq4L4D.png" alt="Floorplan of the venue" style="width:100%; height:100%; object-fit:contain; border-radius:8px;">`;
+                            chartBody.innerHTML = `<div style="text-align:center; padding-top: 5vh; font-size: 1.5rem; color: var(--accent-dark);"><h2 style="font-size:3rem;">Total Usable Area: 73.65 m²</h2><p style="font-size: 2rem;">Capacity for <strong>18 Racks</strong></p></div>`;
                             break;
-                        case 4: case 5:
+                        case 4:
+                            chartHeader.innerHTML = `<h3>High-Density Throughput</h3><p>Based on the revised 18-rack capacity.</p>`;
+                            chartBody.innerHTML = `<div style="text-align:center; padding-top: 5vh; font-size: 1.5rem; color: var(--accent-dark);"><h2 style="font-size:3rem;">2,700 Heads/Month</h2><p style="font-size: 2rem;">at full operational capacity</p></div>`;
+                            break;
+                        case 5:
                             chartHeader.innerHTML = `<h3>The Process: Continuous Harvest Cycle</h3>`;
                             chartBody.innerHTML = `<div class="gantt-container"><div class="gantt-row"><div class="gantt-label"><strong>Weeks →</strong></div><div class="gantt-bar-container">${[1,2,3,4,5,6,7,8].map(w=>`<div style="text-align:center;font-weight:bold;">W${w}</div>`).join("")}</div></div><div class="gantt-row"><div class="gantt-label">Batch A</div><div class="gantt-bar-container"><div class="gantt-bar nursery" style="grid-column:1 / span 2"></div><div class="gantt-bar nft" style="grid-column:3 / span 4"></div><div class="gantt-bar harvest" style="grid-column:7 / span 1">✓</div></div></div><div class="gantt-row"><div class="gantt-label">Batch B</div><div class="gantt-bar-container"><div class="gantt-bar nursery" style="grid-column:2 / span 2"></div><div class="gantt-bar nft" style="grid-column:4 / span 4"></div><div class="gantt-bar harvest" style="grid-column:8 / span 1">✓</div></div></div><div class="gantt-row"><div class="gantt-label">Batch C</div><div class="gantt-bar-container"><div class="gantt-bar nursery" style="grid-column:3 / span 2"></div><div class="gantt-bar nft" style="grid-column:5 / span 4"></div></div></div><div class="gantt-legend"><div class="legend-item"><div class="legend-color nursery"></div><span>Nursery Phase</span></div><div class="legend-item"><div class="legend-color nft"></div><span>NFT Growth Phase</span></div><div class="legend-item"><div class="legend-color harvest"></div><span>Harvest Week</span></div></div></div>`;
                             break;
-                        case 6: // SOP Flowchart
+                        case 6: // SOP
                              chartHeader.innerHTML = `<h3>Operational Excellence: Standard Operating Procedure</h3>`;
-                             chartBody.innerHTML = `<div class="flowchart-grid">
-                                <div class="flow-step" style="grid-column: 1; grid-row: 1;"><h4>1. Sanitize & Seed</h4><p>Trays are sanitized & seeded.</p></div>
-                                <div class="flow-arrow" style="grid-column: 1; grid-row: 2;">↓</div>
-                                <div class="flow-step" style="grid-column: 1; grid-row: 3;"><h4>2. Nursery (2 Wks)</h4><p>Seedlings develop under low light.</p></div>
-                                <div class="flow-arrow" style="grid-column: 2; grid-row: 3;">→</div>
-                                <div class="flow-step" style="grid-column: 3; grid-row: 3;"><h4>3. Transplant</h4><p>Move to main NFT systems.</p></div>
-                                <div class="flow-arrow" style="grid-column: 3; grid-row: 4;">↓</div>
-                                <div class="flow-step" style="grid-column: 3; grid-row: 5;"><h4>4. Growth (4 Wks)</h4><p>Mature with daily nutrient checks.</p></div>
-                                <div class="flow-arrow" style="grid-column: 2; grid-row: 5;">←</div>
-                                <div class="flow-step" style="grid-column: 1; grid-row: 5;"><h4>5. Harvest & Pack</h4><p>Harvested, chilled, and packed.</p></div>
-                             </div>`;
+                             chartBody.innerHTML = `<div class="flowchart-grid"><div class="flow-step" style="grid-column: 1; grid-row: 1;"><h4>1. Sanitize & Seed</h4><p>Trays are sanitized & seeded.</p></div><div class="flow-arrow" style="grid-column: 1; grid-row: 2;">↓</div><div class="flow-step" style="grid-column: 1; grid-row: 3;"><h4>2. Nursery (2 Wks)</h4><p>Seedlings develop under low light.</p></div><div class="flow-arrow" style="grid-column: 2; grid-row: 3;">→</div><div class="flow-step" style="grid-column: 3; grid-row: 3;"><h4>3. Transplant</h4><p>Move to main NFT systems.</p></div><div class="flow-arrow" style="grid-column: 3; grid-row: 4;">↓</div><div class="flow-step" style="grid-column: 3; grid-row: 5;"><h4>4. Growth (4 Wks)</h4><p>Mature with daily nutrient checks.</p></div><div class="flow-arrow" style="grid-column: 2; grid-row: 5;">←</div><div class="flow-step" style="grid-column: 1; grid-row: 5;"><h4>5. Harvest & Pack</h4><p>Harvested, chilled, and packed.</p></div></div>`;
                             break;
-                        // All subsequent cases adjusted
                         case 7:
                             const revenueData = [{ segment: "B2B (Cafes/Grocers)", value: (config.financials.headsSold * 0.6) * 5.50 }, { segment: "D2C (Subscriptions)", value: (config.financials.headsSold * 0.4) * 7.50 }];
                             chartHeader.innerHTML = `<h3>Projected Monthly Revenue</h3><p>Based on ${config.financials.headsSold} heads sold per month.</p>`;
@@ -181,7 +250,6 @@
                             if(animate) animateWaterfall(waterfallChart);
                             break;
                         case 10:
-                            // Recalculated for 18 racks
                             const capexChartData = [{category: "Racks & LEDs", value: 34980}, {category: "Other", value: 9440}];
                             const opexChartData = [{category: "Electricity", value: 17948}, {category: "Labor", value: 10800}, {category: "Consumables", value: 9720}, {category: "Packaging/Other", value: 3300}];
                             const capexTotal = capexChartData.reduce((a,b)=> a+b.value, 0);
